@@ -5,3 +5,4 @@ pnpm-lock.yaml
 .prettierignore
 tsconfig.json
 .husky
+src
