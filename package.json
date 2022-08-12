@@ -1,0 +1,32 @@
+{
+  "name": "gampang",
+  "version": "1.0.0",
+  "description": "\"Gampang\" is a whatsapp bot framework. Based on @adiwajshing/bailey",
+  "main": "./dist/index.js",
+  "scripts": {
+    "format": "prettier . --write",
+    "lint": "eslint \"src/**/*.{ts,js,d.ts}\" --fix",
+    "build": "tsc -p tsconfig.json",
+    "clean": "rimraf dist",
+    "prepare": "husky install"
+  },
+  "keywords": [
+    "baileys",
+    "gampang",
+    "whatsapp-bot"
+  ],
+  "author": "Hanif Dwy Putra S <hanifdwyputrasembiring@gmail.com>",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "@types/node": "^18.7.2",
+    "@typescript-eslint/eslint-plugin": "5.33.1-alpha.6",
+    "@typescript-eslint/parser": "5.33.1-alpha.6",
+    "eslint": ">=5.16.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "husky": "^8.0.1",
+    "prettier": "^2.7.1",
+    "rimraf": "^3.0.2",
+    "typescript": "4.7.4"
+  }
+}
