@@ -1,4 +1,3 @@
-import { Client } from '../bot';
 import { Context } from '../structures/context';
 
 export interface CollectorOptions {

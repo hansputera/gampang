@@ -18,7 +18,7 @@ export interface ClientOptions {
   };
 }
 
-export interface ClientEvents<C> {
+export interface ClientEvents {
   'qr': (code: string) => Promise<void> | void;
   'ready': () => Promise<void> | void;
   'logout': () => Promise<void> | void;
