@@ -1,17 +1,19 @@
 import { DisconnectReason, UserFacingSocketConfig } from '@adiwajshing/baileys';
 import EventEmitter from 'events';
+import { Server } from 'node:http';
 import { unlink } from 'node:fs/promises';
 
 import type {
   ClientEvents,
   RawClient,
-  CommandClientOptions,
+  ClientOptions,
   Command,
   CommandOptions,
 } from '../@typings';
 import { createLogger } from '../logger';
 import { createWA } from '../raw/client';
 import { MessageCollector } from '../structures';
+import { qrHandler } from '../utils';
 import { registerEvents } from './events';
 
 export declare interface Client {
@@ -30,14 +32,17 @@ export class Client extends EventEmitter {
   /**
    * @constructor
    * @param {string} session Folder session path.
-   * @param {CommandClientOptions} options Command Client options.
+   * @param {ClientOptions} options Command Client options.
    */
-  constructor(private session: string, private options?: CommandClientOptions) {
+  constructor(private session: string, private options?: ClientOptions) {
     super();
 
     if (typeof options !== 'object' || !Array.isArray(options.prefixes))
       options = {
         'prefixes': ['!'],
+        'qr': {
+          'storeType': 'terminal',
+        },
       };
   }
 
@@ -45,6 +50,8 @@ export class Client extends EventEmitter {
   public logger = createLogger('Gampang');
   public raw?: RawClient;
   public collectors: Map<string, MessageCollector> = new Map();
+
+  qrServer?: Server;
 
   /**
    * Add a command
@@ -84,7 +91,7 @@ export class Client extends EventEmitter {
    * Get CommandClient options
    * @return {CommandClientOptions}
    */
-  public getOptions(): CommandClientOptions | undefined {
+  public getOptions(): ClientOptions | undefined {
     return this.options;
   }
 
@@ -104,8 +111,14 @@ export class Client extends EventEmitter {
     this.raw = await createWA(this.session, options);
 
     this.raw.ev.on('connection.update', async (conn) => {
-      if (conn.qr) this.emit('qr', conn.qr);
-      else if (conn.lastDisconnect && conn.lastDisconnect.error) {
+      if (conn.isNewLogin && this.qrServer) {
+        this.qrServer.close();
+        this.qrServer = undefined;
+      }
+      if (conn.qr) {
+        qrHandler(this, conn.qr, this.options?.qr as ClientOptions['qr']);
+        this.emit('qr', conn.qr);
+      } else if (conn.lastDisconnect && conn.lastDisconnect.error) {
         switch (
           (
             conn.lastDisconnect.error as unknown as {
