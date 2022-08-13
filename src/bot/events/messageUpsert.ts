@@ -1,27 +1,17 @@
 import { messageCollector } from '../../middlewares';
-import { CommandContext, Context } from '../../structures';
+import { Context } from '../../structures';
 import { Client } from '../client';
-import { CommandClient } from '../commandClient';
 
-export const messageUpsertHandler = async (client: Client | CommandClient) => {
+export const messageUpsertHandler = async (client: Client) => {
   client.raw?.ev.on('messages.upsert', async ({ messages }) => {
-    if (client instanceof CommandClient) {
-      const context = new CommandContext(client, messages[0]);
+    const context = new Context(client, messages[0]);
 
-      const collector = await messageCollector(context);
-      if (!collector) return;
+    const collector = await messageCollector(context);
+    if (!collector) return;
 
-      const cmd = context.getCommand();
-      if (cmd) cmd.run(context);
+    const cmd = context.getCommand();
+    if (cmd) cmd.run(context);
 
-      client.emit('message', context);
-    } else {
-      const context = new Context(client, messages[0]);
-
-      const collector = await messageCollector(context);
-      if (!collector) return;
-
-      client.emit('message', context);
-    }
+    client.emit('message', context);
   });
 };
