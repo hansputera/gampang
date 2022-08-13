@@ -1,13 +1,11 @@
 import type { Context } from './context';
 import type { CollectorOptions } from '../@typings';
 import EventEmitter from 'events';
-import { Client, CommandClient } from '../bot';
-import type { CommandContext } from './context.command';
 
 /**
  * @class MessageCollector
  */
-export class MessageCollector<C extends Client | CommandClient> {
+export class MessageCollector {
   public runner?: NodeJS.Timeout;
   /**
    * Message collector session key
@@ -16,14 +14,14 @@ export class MessageCollector<C extends Client | CommandClient> {
   /**
    * Validate a message function
    */
-  public validate!: CollectorOptions<C>['validation'];
+  public validate!: CollectorOptions['validation'];
 
   /**
    * @param {Context} ctx - A context of message
    */
   constructor(
-    public ctx: C extends Client ? Context : CommandContext,
-    private options: CollectorOptions<C> = {
+    public ctx: Context,
+    private options: CollectorOptions = {
       time: 30 * 1000,
       max: 3,
       validation: () => true,

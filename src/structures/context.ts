@@ -1,7 +1,7 @@
 import { AnyMessageContent, proto } from '@adiwajshing/baileys';
 import Long from 'long';
-import { CollectorOptions } from '../@typings';
-import { Client, CommandClient } from '../bot';
+import { CollectorOptions, Command, CommandClientOptions } from '../@typings';
+import { Client } from '../bot';
 import { MessageCollector } from './collector';
 import { Image, Sticker, Video } from './entities';
 
@@ -11,11 +11,11 @@ import { Image, Sticker, Video } from './entities';
 export class Context {
   /**
    * @constructor
-   * @param {Client | CommandClient} client Gampang Client
+   * @param {Client} client Gampang Client
    * @param {proto.IWebMessageInfo} rawMessage Baileys proto.IWebMessageInfo
    */
   constructor(
-    public client: Client | CommandClient,
+    public client: Client,
     private rawMessage: proto.IWebMessageInfo,
   ) {}
 
@@ -54,6 +54,93 @@ export class Context {
     if (this.rawMessage.message?.stickerMessage) {
       return new Sticker(this.rawMessage.message.stickerMessage);
     } else return undefined;
+  }
+
+  public flags: string[] = [];
+  public args: string[] = [];
+
+  /**
+   * Get command details.
+   * @return {Command}
+   */
+  public getCommand(): Command | undefined {
+    if (!this.isCommand()) return undefined;
+
+    return this.client.commands.get(this.getCommandName());
+  }
+  /**
+   * Parse message to args and flags
+   *
+   * @return {{args: string[], flags: string[]}}
+   */
+  private reloadQuery(): { args: string[]; flags: string[] } {
+    this.args = [];
+    this.flags = [];
+
+    for (const q of this.getArgs()) {
+      if (q.startsWith('--')) this.flags.push(q.slice(2).toLowerCase());
+      else this.args.push(q);
+    }
+
+    return { args: this.args, flags: this.flags };
+  }
+
+  /**
+   * Get the arguments of message (only available if it is a command)
+   *
+   * @param {boolean} withPrefix
+   * @return {string[]}
+   */
+  public getArgs(withPrefix = false): string[] {
+    if (!this.isCommand()) return [];
+    let text = this.text;
+    const extendedMessage = this.raw.message?.extendedTextMessage;
+
+    if (
+      extendedMessage &&
+      extendedMessage.contextInfo &&
+      extendedMessage.contextInfo.quotedMessage
+    ) {
+      text += ' ' + extendedMessage.contextInfo.quotedMessage.conversation;
+    }
+
+    return text
+      .slice(this.getPrefix().length)
+      .split(/ +/g)
+      .slice(withPrefix ? 0 : 1);
+  }
+
+  /**
+   * Knows the message is command.
+   *
+   * @return {boolean}
+   */
+  public isCommand(): boolean {
+    if (!this.text) return false;
+    else return this.getPrefix().length > 0;
+  }
+
+  /**
+   * Get the prefix from the message
+   *
+   * @return {string}
+   */
+  public getPrefix(): string {
+    if (!this.text) return '';
+    const p = (this.client.getOptions() as CommandClientOptions).prefixes.find(
+      (p) => this.text.startsWith(p.toLowerCase()),
+    );
+
+    return p ? p : '';
+  }
+
+  /**
+   * Get the command name from message
+   *
+   * @return {string}
+   */
+  public getCommandName(): string {
+    return this.getArgs(true)[0];
   }
 
   /**
@@ -368,9 +455,7 @@ export class Context {
    * @param {CollectorOptions} options - Message Collector options.
    * @return {MessageCollector}
    */
-  public getCollector(
-    options?: CollectorOptions<Client>,
-  ): MessageCollector<Client> {
+  public getCollector(options?: CollectorOptions): MessageCollector {
     return new MessageCollector(this, options);
   }
   /**
