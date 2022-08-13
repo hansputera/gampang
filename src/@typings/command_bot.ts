@@ -1,4 +1,4 @@
-import { CommandContext } from '../structures';
+import { Context } from '../structures';
 
 export interface CommandClientOptions {
   prefixes: string[];
@@ -17,5 +17,5 @@ export interface CommandOptions {
 
 export interface Command {
   options?: CommandOptions;
-  run(ctx: CommandContext): Promise<void> | void;
+  run(ctx: Context): Promise<void> | void;
 }

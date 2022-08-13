@@ -1,6 +1,5 @@
 import makeWASocket, { AuthenticationState } from '@adiwajshing/baileys';
-import { CommandClient } from '../bot';
-import { CommandContext, Context } from '../structures';
+import { Context } from '../structures';
 
 export type MakeWaSocketType = ReturnType<typeof makeWASocket>;
 export interface RawClient extends MakeWaSocketType {
@@ -23,7 +22,5 @@ export interface ClientEvents<C> {
   'qr': (code: string) => Promise<void> | void;
   'ready': () => Promise<void> | void;
   'logout': () => Promise<void> | void;
-  'message': (
-    context: C extends CommandClient ? CommandContext : Context,
-  ) => Promise<void | void>;
+  'message': (context: Context) => Promise<void | void>;
 }
