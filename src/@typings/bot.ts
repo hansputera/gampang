@@ -10,6 +10,15 @@ export interface RawClient extends MakeWaSocketType {
   };
 }
 
+type QrStoreType = 'file' | 'terminal' | 'web';
+
+export interface ClientOptions {
+  qr: {
+    storeType: QrStoreType;
+    options: Record<string, unknown>;
+  };
+}
+
 export interface ClientEvents<C> {
   'qr': (code: string) => Promise<void> | void;
   'ready': () => Promise<void> | void;
