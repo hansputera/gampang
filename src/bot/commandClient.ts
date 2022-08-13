@@ -41,25 +41,17 @@ export class CommandClient extends Client {
   /**
    * Add a command
    * @param {string} name Command name.
-   * @param {string | string[] | RegExp | RegExp[]} match Command matchs.
    * @param {CommandOptions} opts Command options.
    * @param {Function} func Command function.
    * @return {CommandClient}
    */
   command(
     name: string,
-    match: Command['matchs'],
     opts: CommandOptions = {
       'cooldown': 5000,
     },
     func: Command['run'],
   ): CommandClient {
-    if (Array.isArray(match)) {
-      match = (match as unknown[]).filter(
-        (m) => m instanceof RegExp || typeof m === 'string',
-      ) as string[] | RegExp[];
-    }
-
     if (typeof opts !== 'object')
       opts = {
         'cooldown': 5000,
@@ -74,7 +66,6 @@ export class CommandClient extends Client {
     }
 
     this.commands.set(name, {
-      'matchs': match,
       'run': func,
       'options': opts,
     });

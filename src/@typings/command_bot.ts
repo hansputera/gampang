@@ -16,7 +16,6 @@ export interface CommandOptions {
 }
 
 export interface Command {
-  matchs: string | string[] | RegExp | RegExp[];
   options?: CommandOptions;
   run(ctx: CommandContext): Promise<void> | void;
 }
