@@ -1,6 +1,6 @@
 # Gampang
 
-"Gampang" adalah WhatsApp Bot framework yang berdiri atas library [@adiwajshing/baileys](https://npmjs.com/package/baileys)
+"Gampang" adalah WhatsApp Bot framework yang dibuat oleh anak bangsa dan berdiri diatas library [@adiwajshing/baileys](https://npmjs.com/package/baileys)
 
 ## Installation
 
