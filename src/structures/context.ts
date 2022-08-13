@@ -1,6 +1,8 @@
 import { AnyMessageContent, proto } from '@adiwajshing/baileys';
 import Long from 'long';
-import { Client } from '../bot';
+import { CollectorOptions } from '../@typings';
+import { Client, CommandClient } from '../bot';
+import { MessageCollector } from './collector';
 import { Image, Sticker, Video } from './entities';
 
 /**
@@ -9,11 +11,11 @@ import { Image, Sticker, Video } from './entities';
 export class Context {
   /**
    * @constructor
-   * @param {Client} client Gampang Client
+   * @param {Client | CommandClient} client Gampang Client
    * @param {proto.IWebMessageInfo} rawMessage Baileys proto.IWebMessageInfo
    */
   constructor(
-    private client: Client,
+    public client: Client | CommandClient,
     private rawMessage: proto.IWebMessageInfo,
   ) {}
 
@@ -359,6 +361,23 @@ export class Context {
       this.client.logger.error('Error want to delete a message: ', e);
       return undefined;
     }
+  }
+
+  /**
+   * Get collector instance.
+   * @param {CollectorOptions} options - Message Collector options.
+   * @return {MessageCollector}
+   */
+  public getCollector(
+    options?: CollectorOptions<Client>,
+  ): MessageCollector<Client> {
+    return new MessageCollector(this, options);
+  }
+  /**
+   * Get raw message.
+   */
+  get raw(): proto.IWebMessageInfo {
+    return this.rawMessage;
   }
 }
 /**
