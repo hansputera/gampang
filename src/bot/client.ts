@@ -21,9 +21,9 @@ export declare interface Client {
 export class Client extends EventEmitter {
   /**
    * @constructor
-   * @param {string} folderSession Folder session path.
+   * @param {string} session Folder session path.
    */
-  constructor(private folderSession: string) {
+  constructor(private session: string) {
     super();
   }
 
@@ -43,7 +43,7 @@ export class Client extends EventEmitter {
       };
     else if (!options.logger) options.logger = this.logger;
 
-    this.#baileys = await createWA(this.folderSession, options);
+    this.#baileys = await createWA(this.session, options);
 
     this.#baileys.ev.on('connection.update', async (conn) => {
       if (conn.qr) this.emit('qr', conn.qr);
@@ -70,7 +70,7 @@ export class Client extends EventEmitter {
             break;
           case DisconnectReason.badSession:
             this.logger.error('Bad Session, removing sessions folder');
-            await unlink(this.folderSession).catch((e) => {
+            await unlink(this.session).catch((e) => {
               this.logger.error('Fail to remove session folder:', e);
             });
             this.logger.warn('Reconnecting');
