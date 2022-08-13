@@ -1,6 +1,6 @@
 import { AnyMessageContent, proto } from '@adiwajshing/baileys';
 import Long from 'long';
-import { CollectorOptions, Command, CommandClientOptions } from '../@typings';
+import { CollectorOptions, Command, ClientOptions } from '../@typings';
 import { Client } from '../bot';
 import { MessageCollector } from './collector';
 import { Image, Sticker, Video } from './entities';
@@ -127,8 +127,8 @@ export class Context {
    */
   public getPrefix(): string {
     if (!this.text) return '';
-    const p = (this.client.getOptions() as CommandClientOptions).prefixes.find(
-      (p) => this.text.startsWith(p.toLowerCase()),
+    const p = (this.client.getOptions() as ClientOptions).prefixes?.find((p) =>
+      this.text.startsWith(p.toLowerCase()),
     );
 
     return p ? p : '';
