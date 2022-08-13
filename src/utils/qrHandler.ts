@@ -1,44 +1,42 @@
 import { ClientOptions } from '../@typings';
 import qrcode from 'qrcode';
 import http from 'node:http';
+import { Client } from '../bot';
 
 export const qrHandler = async (
+  client: Client,
   qr: string,
   qrOptions: ClientOptions['qr'],
 ): Promise<void> => {
   if (qrOptions.storeType === 'file') {
-    if (typeof qrOptions.options.dest !== 'string')
+    if (typeof qrOptions.options?.dest !== 'string')
       throw new TypeError('Please fill QR Path destination!');
     qrcode.toFile(qrOptions.options.dest, qr, (err) => {
       if (err) console.error('Something was wrong:', err);
     });
   } else if (qrOptions.storeType === 'web') {
-    if (typeof qrOptions.options.port !== 'number')
+    if (!qrOptions.options?.port || typeof qrOptions.options?.port !== 'number')
       throw new TypeError('Please fill QR Server Port number');
 
-    const server = http.createServer();
+    if (!client.qrServer) client.qrServer = http.createServer();
+    let port = qrOptions.options.port;
 
-    server.on('request', (_, res) => {
-      return qrcode.toFileStream(res, qr);
+    client.qrServer.on('request', async (_, res) => {
+      res.setHeader('Content-Type', 'text/html');
+      return res.end(`<img src="${await qrcode.toDataURL(qr)}" />`);
     });
 
-    server.on('listening', () => {
-      setTimeout(() => {
-        server.close();
-      }, 30_000);
-    });
-
-    server.on('error', (err) => {
+    client.qrServer.on('error', (err) => {
       if (/eaddrinuse/gi.test(err.message)) {
-        (qrOptions.options.port as number)++;
-        server.close();
-        server.listen(qrOptions.options.port);
+        port++;
+        client.qrServer?.close();
+        client.qrServer?.listen(port);
       }
     });
 
-    server.listen(qrOptions.options.port, '0.0.0.0');
+    client.qrServer?.listen(port, '0.0.0.0');
   } else if (qrOptions.storeType === 'terminal') {
-    console.log(qrcode.toString(qr));
+    console.log(await qrcode.toString(qr));
   }
   return;
 };
