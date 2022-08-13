@@ -29,11 +29,14 @@ Sangatlah gampang sekali untuk menggunakannya
 ```js
 const { Client } = require('gampang');
 
-const client = new Client('folder_session'); // 'folder_session' bisa arahin ke direktori session kalian yah
-
-client.on('qr', (code) => {
-  // olah 'code' qr nya disini, untuk di scan.
-});
+const client = new Client('folder_session', {
+  'qr': {
+    'storeType': 'file',
+    'options': {
+      'dest': 'qr.png',
+    },
+  },
+}); // 'folder_session' bisa arahin ke direktori session kalian yah
 
 client.on('message', async (context) => {
   if (context.text.toLowerCase() === 'halo') {
