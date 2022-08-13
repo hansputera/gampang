@@ -6,4 +6,10 @@ client.on('qr', (code) => {
   console.log('QR diterima:', code);
 });
 
+client.on('message', async (ctx) => {
+  if (ctx.text === 'halo') {
+    await ctx.reply('Hello World!');
+  }
+});
+
 client.launch();
