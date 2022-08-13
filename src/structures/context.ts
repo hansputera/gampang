@@ -1,7 +1,6 @@
 import { AnyMessageContent, proto } from '@adiwajshing/baileys';
 import Long from 'long';
 import { Client } from '../bot';
-import { ContextInfo } from './context.info';
 import { Image, Sticker, Video } from './entities';
 
 /**
@@ -360,5 +359,29 @@ export class Context {
       this.client.logger.error('Error want to delete a message: ', e);
       return undefined;
     }
+  }
+}
+/**
+ * @class ContextInfo
+ */
+export class ContextInfo extends Context {
+  /**
+   *
+   * @param {proto.IContextInfo} raw - Context Info
+   * @param {string} remoteJid - Remote JID
+   * @param {Client} client - Bot Client
+   */
+  constructor(raw: proto.IContextInfo, remoteJid: string, client: Client) {
+    super(client, {
+      'key': {
+        'fromMe':
+          client.raw?.user?.id.replace(/@.+/gi, '').split(':')[0] ===
+          raw.participant?.replace(/@.+/gi, ''),
+        'id': raw.stanzaId,
+        'remoteJid': remoteJid,
+      },
+      'message': raw.quotedMessage,
+      'messageTimestamp': Date.now(),
+    });
   }
 }
