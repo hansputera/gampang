@@ -1,13 +1,5 @@
 import { Context } from '../structures';
 
-export interface CommandClientOptions {
-  prefixes: string[];
-  /**
-   * JIDs
-   */
-  owners?: string[];
-}
-
 export interface CommandOptions {
   description?: string;
   cooldown?: number;

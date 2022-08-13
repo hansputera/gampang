@@ -14,8 +14,10 @@ type QrStoreType = 'file' | 'terminal' | 'web';
 export interface ClientOptions {
   qr: {
     storeType: QrStoreType;
-    options: Record<string, unknown>;
+    options?: Record<string, string | number>;
   };
+  prefixes?: string[];
+  owners?: string[];
 }
 
 export interface ClientEvents {
