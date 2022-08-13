@@ -5,6 +5,7 @@ import { unlink } from 'node:fs/promises';
 import type { ClientEvents, RawClient } from '../@typings';
 import { createLogger } from '../logger';
 import { createWA } from '../raw/client';
+import { registerEvents } from './events';
 
 export declare interface Client {
   on<U extends keyof ClientEvents>(event: U, listener: ClientEvents[U]): this;
@@ -28,7 +29,7 @@ export class Client extends EventEmitter {
   }
 
   public logger = createLogger('Gampang');
-  #baileys?: RawClient;
+  public raw?: RawClient;
 
   /**
    * Launch bot.
@@ -43,9 +44,9 @@ export class Client extends EventEmitter {
       };
     else if (!options.logger) options.logger = this.logger;
 
-    this.#baileys = await createWA(this.session, options);
+    this.raw = await createWA(this.session, options);
 
-    this.#baileys.ev.on('connection.update', async (conn) => {
+    this.raw.ev.on('connection.update', async (conn) => {
       if (conn.qr) this.emit('qr', conn.qr);
       else if (conn.lastDisconnect && conn.lastDisconnect.error) {
         switch (
@@ -60,12 +61,12 @@ export class Client extends EventEmitter {
           case DisconnectReason.loggedOut:
             this.logger.info('Logged out');
             this.emit('logout');
-            if (this.#baileys?.ws) this.#baileys.ws.close();
-            this.#baileys = undefined;
+            if (this.raw?.ws) this.raw.ws.close();
+            this.raw = undefined;
             break;
           case DisconnectReason.restartRequired:
             this.logger.warn('Restart required signal received, reconnecting');
-            this.#baileys = undefined;
+            this.raw = undefined;
             this.launch(options);
             break;
           case DisconnectReason.badSession:
@@ -74,13 +75,15 @@ export class Client extends EventEmitter {
               this.logger.error('Fail to remove session folder:', e);
             });
             this.logger.warn('Reconnecting');
-            this.#baileys = undefined;
+            this.raw = undefined;
             this.launch(options);
             break;
         }
       }
 
-      await this.#baileys?.getAuth().saveCreds();
+      await this.raw?.getAuth().saveCreds();
     });
+
+    registerEvents(this);
   }
 }
