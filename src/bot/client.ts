@@ -5,14 +5,18 @@ import { unlink } from 'node:fs/promises';
 import type { ClientEvents, RawClient } from '../@typings';
 import { createLogger } from '../logger';
 import { createWA } from '../raw/client';
+import { MessageCollector } from '../structures';
 import { registerEvents } from './events';
 
 export declare interface Client {
-  on<U extends keyof ClientEvents>(event: U, listener: ClientEvents[U]): this;
-
-  emit<U extends keyof ClientEvents>(
+  on<U extends keyof ClientEvents<Client>>(
     event: U,
-    ...args: Parameters<ClientEvents[U]>
+    listener: ClientEvents<Client>[U],
+  ): this;
+
+  emit<U extends keyof ClientEvents<Client>>(
+    event: U,
+    ...args: Parameters<ClientEvents<Client>[U]>
   ): boolean;
 }
 
@@ -30,6 +34,7 @@ export class Client extends EventEmitter {
 
   public logger = createLogger('Gampang');
   public raw?: RawClient;
+  public collectors: Map<string, MessageCollector<Client>> = new Map();
 
   /**
    * Launch bot.
