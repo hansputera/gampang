@@ -18,6 +18,7 @@ export const createLogger = (
       'options': {
         'colorize': true,
         'ignore': 'hostname',
+        'hideObject': true,
       },
     },
     ...options,
