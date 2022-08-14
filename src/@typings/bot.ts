@@ -13,7 +13,7 @@ type QrStoreType = 'file' | 'terminal' | 'web';
 
 export interface ClientOptions {
   qr: {
-    storeType: QrStoreType;
+    store: QrStoreType;
     options?: Record<string, string | number>;
   };
   prefixes?: string[];

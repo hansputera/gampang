@@ -8,13 +8,13 @@ export const qrHandler = async (
   qr: string,
   qrOptions: ClientOptions['qr'],
 ): Promise<void> => {
-  if (qrOptions.storeType === 'file') {
+  if (qrOptions.store === 'file') {
     if (typeof qrOptions.options?.dest !== 'string')
       throw new TypeError('Please fill QR Path destination!');
     qrcode.toFile(qrOptions.options.dest, qr, (err) => {
       if (err) console.error('Something was wrong:', err);
     });
-  } else if (qrOptions.storeType === 'web') {
+  } else if (qrOptions.store === 'web') {
     if (!qrOptions.options?.port || typeof qrOptions.options?.port !== 'number')
       throw new TypeError('Please fill QR Server Port number');
 
@@ -35,7 +35,7 @@ export const qrHandler = async (
     });
 
     client.qrServer?.listen(port, '0.0.0.0');
-  } else if (qrOptions.storeType === 'terminal') {
+  } else if (qrOptions.store === 'terminal') {
     console.log(await qrcode.toString(qr));
   }
   return;

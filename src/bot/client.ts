@@ -41,7 +41,7 @@ export class Client extends EventEmitter {
       options = {
         'prefixes': ['!'],
         'qr': {
-          'storeType': 'terminal',
+          'store': 'terminal',
         },
       };
   }
