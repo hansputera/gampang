@@ -8,12 +8,14 @@ const client = new Client(path.resolve(__dirname, 'sessions'), {
       'port': 3000,
     },
   },
+  'prefixes': ['!!'],
 });
 
-client.on('message', async (ctx) => {
-  if (ctx.text.toLowerCase() === 'halo') {
-    await ctx.reply('Halo kak!');
-  }
+client.command('hello', {
+  'aliases': ['hi', 'hey'],
+  'cooldown': 1_000,
+}, (ctx) => {
+  ctx.reply('Hello World');
 });
 
 client.launch();
