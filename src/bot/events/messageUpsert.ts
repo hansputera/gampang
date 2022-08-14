@@ -10,7 +10,16 @@ export const messageUpsertHandler = async (client: Client) => {
     if (!collector) return;
 
     const cmd = context.getCommand();
-    if (cmd) cmd.run(context);
+    if (cmd) {
+      if (
+        (cmd.options?.groupOnly && !context.isGroup) ||
+        (cmd.options?.privateOnly && !context.isPM) ||
+        (cmd.options?.ownerOnly &&
+          !context.client.getOptions()?.owners?.includes(context.authorNumber))
+      )
+        return;
+      cmd.run(context);
+    }
 
     client.emit('message', context);
   });
