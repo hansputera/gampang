@@ -1,4 +1,4 @@
-import { GroupMetadata, AnyMessageContent } from '@adiwajshing/baileys';
+import { GroupMetadata, AnyMessageContent, proto } from '@adiwajshing/baileys';
 import { Client } from '../bot';
 import { GroupParticipantContext } from './entities';
 import { Context } from './context';
@@ -96,7 +96,10 @@ export class GroupContext {
   public async send(content: AnyMessageContent): Promise<Context> {
     return new Context(
       this.client,
-      await this.client.raw?.sendMessage(this.jid, content),
+      (await this.client.raw?.sendMessage(
+        this.jid,
+        content,
+      )) as proto.IWebMessageInfo,
       false,
     ); // avoid internal error.
   }

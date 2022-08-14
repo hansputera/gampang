@@ -12,7 +12,7 @@ import type {
 } from '../@typings';
 import { createLogger } from '../logger';
 import { createWA } from './createWA';
-import { MessageCollector } from '../structures';
+import { GroupContext, MessageCollector } from '../structures';
 import { qrHandler } from '../utils';
 import { registerEvents } from './events';
 
@@ -50,6 +50,7 @@ export class Client extends EventEmitter {
   public logger = createLogger('Gampang');
   public raw?: RawClient;
   public collectors: Map<string, MessageCollector> = new Map();
+  public groups: Map<string, GroupContext> = new Map();
 
   qrServer?: Server;
 

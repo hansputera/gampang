@@ -1,9 +1,14 @@
-import { AnyMessageContent, proto } from '@adiwajshing/baileys';
+import {
+  AnyMessageContent,
+  GroupParticipant,
+  proto,
+} from '@adiwajshing/baileys';
 import Long from 'long';
 import { CollectorOptions, Command, ClientOptions } from '../@typings';
 import { Client } from '../bot';
 import { MessageCollector } from './collector';
 import { Image, Sticker, Video } from './entities';
+import { GroupContext } from './group';
 
 /**
  * @class Context
@@ -13,11 +18,16 @@ export class Context {
    * @constructor
    * @param {Client} client Gampang Client
    * @param {proto.IWebMessageInfo} rawMessage Baileys proto.IWebMessageInfo
+   * @param {boolean?} groupSync Sync group mode
    */
   constructor(
     public client: Client,
     private rawMessage: proto.IWebMessageInfo,
-  ) {}
+    groupSync: boolean | null = false,
+  ) {
+    this.#reloadQuery();
+    if (groupSync) this.syncGroup();
+  }
 
   /**
    * Get Message ID
@@ -36,6 +46,15 @@ export class Context {
   }
 
   /**
+   * Get group context data (if any)
+   *
+   * @return {GroupContext | undefined}
+   */
+  public getGroup(): GroupContext | undefined {
+    return this.client.groups.get(this.getCurrentJid().concat('@g.us'));
+  }
+
+  /**
    * Get current JID
    * @return {string}
    */
@@ -43,6 +62,25 @@ export class Context {
     return this.rawMessage.key.remoteJid
       ? this.rawMessage.key.remoteJid.replace(/@.+/gi, '')
       : '';
+  }
+
+  /**
+   * Get GroupParticipant class.
+   *
+   * @return {GroupParticipant | undefined}
+   */
+  public get participant(): GroupParticipant | undefined {
+    if (!this.isGroup) return undefined;
+    else if (
+      this.isGroup &&
+      !this.client.groups.has(this.rawMessage.key.remoteJid as string)
+    ) {
+      return undefined;
+    }
+
+    return this.client.groups
+      .get(this.rawMessage.key.remoteJid as string)
+      ?.members.find((m) => m.id === this.authorNumber);
   }
 
   /**
@@ -68,12 +106,42 @@ export class Context {
 
     return this.client.commands.get(this.getCommandName());
   }
+
+  /**
+   * If the chat is in a group, add it to cache.
+   *
+   * @return {Promise<boolean>}
+   */
+  public async syncGroup(): Promise<boolean> {
+    if (
+      !this.isGroup ||
+      this.client.groups.has(this.rawMessage.key.remoteJid as string)
+    ) {
+      return false;
+    }
+
+    const groupMeta = await this.client.raw
+      ?.groupMetadata(this.rawMessage.key.remoteJid as string)
+      .catch((err) => err.message);
+
+    if (typeof groupMeta === 'string') {
+      console.warn("Couldn't sync the group for chat", this.id);
+      return false;
+    }
+
+    this.client.groups.set(
+      this.rawMessage.key.remoteJid as string,
+      new GroupContext(this.client, groupMeta),
+    );
+    return true;
+  }
+
   /**
    * Parse message to args and flags
    *
    * @return {{args: string[], flags: string[]}}
    */
-  private reloadQuery(): { args: string[]; flags: string[] } {
+  #reloadQuery(): { args: string[]; flags: string[] } {
     this.args = [];
     this.flags = [];
 
