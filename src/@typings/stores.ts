@@ -1,6 +1,6 @@
 export type IStore<K, V> = {
-    get(key: K): Promise<V> | V;
-    set(key: K, value: V): Promise<void> | void;
-    delete(key: K): Promise<void> | void;
-    clear(): Promise<void> | void;
+  get(key: K): V | Promise<V>;
+  set(key: K, value: V): void | Promise<void>;
+  delete(key: K): void | Promise<void>;
+  clear(): void | Promise<void>;
 };

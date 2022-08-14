@@ -44,6 +44,10 @@ export class Client extends EventEmitter {
           'store': 'terminal',
         },
       };
+
+    if (options.dataStore) this.dataStores = options.dataStore;
+    // TODO: change it.
+    else this.dataStores = new Map() as unknown as ClientOptions['dataStore'];
   }
 
   public commands: Map<string, Command> = new Map();
@@ -51,6 +55,7 @@ export class Client extends EventEmitter {
   public raw?: RawClient;
   public collectors: Map<string, MessageCollector> = new Map();
   public groups: Map<string, GroupContext> = new Map();
+  public dataStores?: ClientOptions['dataStore'];
 
   qrServer?: Server;
 

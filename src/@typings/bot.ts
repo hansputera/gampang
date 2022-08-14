@@ -1,5 +1,6 @@
 import makeWASocket, { AuthenticationState } from '@adiwajshing/baileys';
-import { Context } from '../structures';
+import type { Context } from '../structures';
+import type { IStore } from './stores';
 
 export type MakeWaSocketType = ReturnType<typeof makeWASocket>;
 export interface RawClient extends MakeWaSocketType {
@@ -16,6 +17,10 @@ export interface ClientOptions {
     store: QrStoreType;
     options?: Record<string, string | number>;
   };
+  /**
+   * Custom data store.
+   */
+  dataStore?: IStore<string, unknown>;
   prefixes?: string[];
   owners?: string[];
 }
