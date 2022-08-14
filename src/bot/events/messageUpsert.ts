@@ -18,6 +18,29 @@ export const messageUpsertHandler = async (client: Client) => {
           !context.client.getOptions()?.owners?.includes(context.authorNumber))
       )
         return;
+
+      const cooldownKey = 'cooldown_'.concat(
+        context.getCurrentJid(),
+        '-',
+        context.authorNumber,
+      );
+      const cooldown = (await context.client.dataStores?.get(
+        cooldownKey,
+      )) as string;
+
+      if (!cooldown)
+        await context.client.dataStores?.set(
+          cooldownKey,
+          (Date.now() + (cmd.options?.cooldown || 5_000)).toString(),
+        );
+      else return;
+
+      if (context.client.dataStores instanceof Map) {
+        setTimeout(() => {
+          context.client.dataStores?.delete(cooldownKey);
+        }, cmd.options?.cooldown || 5_000);
+      }
+
       cmd.run(context);
     }
 
