@@ -117,10 +117,15 @@ export class Client extends EventEmitter {
     this.raw = await createWA(this.session, options);
 
     this.raw.ev.on('connection.update', async (conn) => {
+      if (conn.connection === 'open' && this.raw && this.raw.user?.id) {
+        this.emit('ready');
+      }
+
       if (conn.isNewLogin && this.qrServer) {
         this.qrServer.close();
         this.qrServer = undefined;
       }
+
       if (conn.qr) {
         if (typeof this.options?.qr === 'object')
           qrHandler(this, conn.qr, this.options?.qr as ClientOptions['qr']);
