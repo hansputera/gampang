@@ -11,7 +11,7 @@ import type {
   CommandOptions,
 } from '../@typings';
 import { createLogger } from '../logger';
-import { createWA } from '../raw/client';
+import { createWA } from './createWA';
 import { MessageCollector } from '../structures';
 import { qrHandler } from '../utils';
 import { registerEvents } from './events';
