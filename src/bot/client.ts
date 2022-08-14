@@ -116,7 +116,8 @@ export class Client extends EventEmitter {
         this.qrServer = undefined;
       }
       if (conn.qr) {
-        qrHandler(this, conn.qr, this.options?.qr as ClientOptions['qr']);
+        if (typeof this.options?.qr === 'object')
+          qrHandler(this, conn.qr, this.options?.qr as ClientOptions['qr']);
         this.emit('qr', conn.qr);
       } else if (conn.lastDisconnect && conn.lastDisconnect.error) {
         switch (

@@ -12,7 +12,7 @@ export interface RawClient extends MakeWaSocketType {
 type QrStoreType = 'file' | 'terminal' | 'web';
 
 export interface ClientOptions {
-  qr: {
+  qr?: {
     store: QrStoreType;
     options?: Record<string, string | number>;
   };
