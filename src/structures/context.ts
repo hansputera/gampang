@@ -104,7 +104,12 @@ export class Context {
   public getCommand(): Command | undefined {
     if (!this.isCommand()) return undefined;
 
-    return this.client.commands.get(this.getCommandName());
+    return (
+      this.client.commands.get(this.getCommandName()) ||
+      [...this.client.commands.values()].find((c) =>
+        c.options?.aliases?.includes(this.getCommandName()),
+      )
+    );
   }
 
   /**

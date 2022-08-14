@@ -6,6 +6,7 @@ export interface CommandOptions {
   groupOnly?: boolean;
   privateOnly?: boolean;
   ownerOnly?: boolean;
+  aliases?: string[];
 }
 
 export interface Command {
