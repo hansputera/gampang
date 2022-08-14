@@ -5,6 +5,7 @@ export interface CommandOptions {
   cooldown?: number;
   groupOnly?: boolean;
   privateOnly?: boolean;
+  ownerOnly?: boolean;
 }
 
 export interface Command {
