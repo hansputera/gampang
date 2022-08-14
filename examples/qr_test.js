@@ -11,11 +11,15 @@ const client = new Client(path.resolve(__dirname, 'sessions'), {
   'prefixes': ['!!'],
 });
 
-client.command('hello', {
-  'aliases': ['hi', 'hey'],
-  'cooldown': 1_000,
-}, (ctx) => {
-  ctx.reply('Hello World');
-});
+client.command(
+  'hello',
+  {
+    'aliases': ['hi', 'hey'],
+    'cooldown': 1_000,
+  },
+  (ctx) => {
+    ctx.reply('Hello World');
+  },
+);
 
 client.launch();
