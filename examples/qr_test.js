@@ -3,7 +3,7 @@ const path = require('node:path');
 
 const client = new Client(path.resolve(__dirname, 'sessions'), {
   'qr': {
-    'storeType': 'web',
+    'store': 'web',
     'options': {
       'port': 3000,
     },

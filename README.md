@@ -31,7 +31,7 @@ const { Client } = require('gampang');
 
 const client = new Client('folder_session', {
   'qr': {
-    'storeType': 'file',
+    'store': 'file',
     'options': {
       'dest': 'qr.png',
     },
