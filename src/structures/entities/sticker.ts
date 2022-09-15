@@ -39,15 +39,9 @@ export class Sticker extends BaseEntity {
    *
    * @return {Promise<Buffer>}
    */
-  public async retrieveFile(): Promise<Buffer> {
-    return await new Promise((resolve) => {
-      let buffer = Buffer.alloc(0);
-      const stream = decryptMedia(this.encryptedUrl, this.key, 'sticker');
-      stream.on('data', (chunk) => {
-        buffer = Buffer.concat([buffer, Buffer.from(chunk)]);
-      });
-
-      stream.on('end', () => resolve(buffer));
+  public retrieveFile(): Promise<Buffer> {
+    return new Promise((resolve) => {
+      decryptMedia(this.encryptedUrl, this.key, 'sticker').then(resolve);
     });
   }
 }

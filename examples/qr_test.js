@@ -1,5 +1,6 @@
 const { Client } = require('../dist/index.js');
 const path = require('node:path');
+const sharp = require('sharp');
 
 const client = new Client(path.resolve(__dirname, 'sessions'), {
   'qr': {
@@ -8,17 +9,54 @@ const client = new Client(path.resolve(__dirname, 'sessions'), {
       'port': 3000,
     },
   },
-  'prefixes': ['!!'],
+  'prefixes': ['.'],
 });
 
 client.command(
-  'hello',
+  'test',
   {
-    'aliases': ['hi', 'hey'],
-    'cooldown': 1_000,
+    aliases: ['-', 'ping', 'pong'],
+    cooldown: 1_000,
   },
   (ctx) => {
-    ctx.reply('Hello World');
+    ctx.reply('pong');
+  },
+);
+
+client.command(
+  'debug',
+  {
+    'aliases': ['hi', 'hey', '_'],
+    'cooldown': 1_000,
+  },
+  async (ctx) => {
+    if (!ctx.getReply())
+      return ctx.reply(
+        'Silahkan reply pesan yang mengandung sticker terlebih dahulu!',
+      );
+    const sticker = ctx.getReply().sticker;
+    if (!sticker) return ctx.reply('Yang anda reply bukanlah sticker!');
+
+    const isGIF = !!ctx.flags.find((f) => f.toLowerCase() === 'gif');
+    if (isGIF && !sticker.animated)
+      return ctx.reply('Are you trying to convert an image to ' + 'a GIF?');
+    try {
+      const stickerBuffer = await sticker.retrieveFile();
+      const sharped = sharp(stickerBuffer, {
+        animated: sticker.animated,
+      });
+
+      if (isGIF) {
+        await ctx.replyWithVideo(await sharped.gif().toBuffer());
+      } else {
+        await ctx.replyWithPhoto(await sharped.png().toBuffer());
+      }
+    } catch (e) {
+      console.log(e);
+      await ctx.reply(
+        'Something was wrong, try again please?\n' + 'Error: ' + e.message,
+      );
+    }
   },
 );
 

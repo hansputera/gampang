@@ -10,48 +10,65 @@ import { Transform } from 'node:stream';
  * @param {MediaType} type WhatsApp Media Type
  * @return {Transform}
  */
-export const decryptMedia = (
+export const decryptMedia = async (
   url: string,
   mediaKey: Uint8Array,
   type: MediaType,
-): Transform => {
-  const mediaResponse = https.get(url, {
-    'timeout': 10_000,
-  });
-
+): Promise<Buffer> => {
+  let buffer = Buffer.alloc(0);
   let remainBytes = Buffer.alloc(0);
-
   const { cipherKey, iv } = getMediaKeys(mediaKey, type);
   const aes = createCipheriv('aes-256-cbc', cipherKey, iv);
   aes.setAutoPadding(false);
 
-  return mediaResponse.pipe(
-    new Transform({
-      'transform'(chunk, _, callback) {
-        let data = Buffer.concat([remainBytes, chunk]);
-
-        const decLength = Math.floor(data.length / 16) * 16;
-        remainBytes = data.subarray(decLength);
-        data = data.subarray(0, decLength);
-
-        try {
-          this.push(aes.update(chunk));
-          callback();
-        } catch (error) {
-          callback(error as Error);
-        }
+  return new Promise(function (resolve) {
+    https.get(
+      url,
+      {
+        'timeout': 10_000,
       },
-      final(callback) {
-        try {
-          this.push(aes.final());
-          callback();
-        } catch (error) {
-          callback(error as Error);
-        }
+      (res) => {
+        res
+          .on('data', (chunk) => {
+            console.log(Buffer.isBuffer(chunk), 'on data');
+            buffer = Buffer.concat([buffer, Buffer.from(chunk)]);
+          })
+          .on('end', () => {
+            console.log('end fro');
+            resolve(buffer);
+          })
+          .pipe(
+            new Transform({
+              'transform'(chunk, _, callback) {
+                console.log(Buffer.isBuffer(chunk), 'on transform');
+                let data = Buffer.concat([remainBytes, chunk]);
+
+                const decLength = Math.floor(data.length / 16) * 16;
+                remainBytes = data.subarray(decLength);
+                data = data.subarray(0, decLength);
+
+                try {
+                  this.push(aes.update(chunk));
+                  callback();
+                } catch (error) {
+                  callback(error as Error);
+                }
+              },
+              final(callback) {
+                try {
+                  console.log('final');
+                  this.push(aes.final());
+                  callback();
+                } catch (error) {
+                  callback(error as Error);
+                }
+              },
+            }),
+            {
+              'end': true,
+            },
+          );
       },
-    }),
-    {
-      'end': true,
-    },
-  );
+    );
+  });
 };
