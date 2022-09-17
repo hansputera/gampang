@@ -28,46 +28,46 @@ export const decryptMedia = async (
         'timeout': 10_000,
       },
       (res) => {
-        res
-          .on('data', (chunk) => {
-            console.log(Buffer.isBuffer(chunk), 'on data');
-            buffer = Buffer.concat([buffer, Buffer.from(chunk)]);
-          })
-          .on('end', () => {
-            console.log('end fro');
-            resolve(buffer);
-          })
-          .pipe(
-            new Transform({
-              'transform'(chunk, _, callback) {
-                console.log(Buffer.isBuffer(chunk), 'on transform');
-                let data = Buffer.concat([remainBytes, chunk]);
+        const stream = res.pipe(
+          new Transform({
+            objectMode: true,
+            'transform'(chunk, _, callback) {
+              console.log(Buffer.isBuffer(chunk), 'on transform');
+              let data = Buffer.concat([remainBytes, chunk]);
 
-                const decLength = Math.floor(data.length / 16) * 16;
-                remainBytes = data.subarray(decLength);
-                data = data.subarray(0, decLength);
+              const decLength = Math.floor(data.length / 16) * 16;
+              remainBytes = data.subarray(decLength);
+              data = data.subarray(0, decLength);
 
-                try {
-                  this.push(aes.update(chunk));
-                  callback();
-                } catch (error) {
-                  callback(error as Error);
-                }
-              },
-              final(callback) {
-                try {
-                  console.log('final');
-                  this.push(aes.final());
-                  callback();
-                } catch (error) {
-                  callback(error as Error);
-                }
-              },
-            }),
-            {
-              'end': true,
+              try {
+                this.push(aes.update(chunk));
+                callback();
+              } catch (error) {
+                callback(error as Error);
+              }
             },
-          );
+            final(callback) {
+              try {
+                console.log('final');
+                this.push(aes.final());
+                callback();
+              } catch (error) {
+                callback(error as Error);
+              }
+            },
+          }),
+          {
+            'end': true,
+          },
+        );
+        stream.on('data', (chunk) => {
+          console.log(Buffer.isBuffer(chunk), 'on data');
+          buffer = Buffer.concat([buffer, Buffer.from(chunk)]);
+        });
+        stream.on('end', () => {
+          console.log('end fro');
+          resolve(buffer);
+        });
       },
     );
   });
