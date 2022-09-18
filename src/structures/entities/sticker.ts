@@ -1,6 +1,5 @@
 import { proto } from '@adiwajshing/baileys';
 import { BaseEntity } from '.';
-import { decryptMedia } from './_util';
 
 /**
  * @class Sticker
@@ -32,16 +31,5 @@ export class Sticker extends BaseEntity {
    */
   public get animated(): boolean {
     return this.raw.isAnimated as boolean;
-  }
-
-  /**
-   * Fetch encrypted url sticker file.
-   *
-   * @return {Promise<Buffer>}
-   */
-  public retrieveFile(): Promise<Buffer> {
-    return new Promise((resolve) => {
-      decryptMedia(this.encryptedUrl, this.key, 'sticker').then(resolve);
-    });
   }
 }

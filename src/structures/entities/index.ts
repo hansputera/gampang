@@ -1,4 +1,9 @@
-import { proto } from '@adiwajshing/baileys';
+import {
+  downloadEncryptedContent,
+  getMediaKeys,
+  MediaType,
+  proto,
+} from '@adiwajshing/baileys';
 import Long from 'long';
 
 /**
@@ -78,6 +83,31 @@ export class BaseEntity {
     if (this.raw.fileLength instanceof Long) {
       return this.raw.fileLength.toInt();
     } else return this.raw.fileLength as number;
+  }
+
+  /**
+   * Fetch encrypted url file.
+   *
+   * @param {MediaType} type Media Type (e.g sticker, video, image)
+   * @return {Promise<Buffer>}
+   */
+  public async retrieveFile(type: MediaType): Promise<Buffer> {
+    let buff: Buffer = Buffer.alloc(0);
+    return await new Promise((resolve, reject) => {
+      downloadEncryptedContent(
+        this.encryptedUrl,
+        getMediaKeys(this.key, type),
+      ).then((stream) => {
+        stream
+          .on('data', async (data) => {
+            buff = Buffer.concat([buff, data]);
+          })
+          .on('end', () => {
+            resolve(buff);
+          })
+          .on('error', reject);
+      });
+    });
   }
 }
 

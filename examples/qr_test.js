@@ -41,7 +41,7 @@ client.command(
     if (isGIF && !sticker.animated)
       return ctx.reply('Are you trying to convert an image to ' + 'a GIF?');
     try {
-      const stickerBuffer = await sticker.retrieveFile();
+      const stickerBuffer = await sticker.retrieveFile('sticker');
       const sharped = sharp(stickerBuffer, {
         animated: sticker.animated,
       });

@@ -1,6 +1,5 @@
 import { proto } from '@adiwajshing/baileys';
 import { BaseEntity } from '.';
-import { decryptMedia } from './_util';
 
 /**
  * @class Image
@@ -32,16 +31,5 @@ export class Image extends BaseEntity {
       'height': this.raw.height as number,
       'width': this.raw.width as number,
     };
-  }
-
-  /**
-   * Fetch encrypted url sticker file.
-   *
-   * @return {Promise<Buffer>}
-   */
-  public retrieveFile(): Promise<Buffer> {
-    return new Promise((resolve) => {
-      decryptMedia(this.encryptedUrl, this.key, 'image').then(resolve);
-    });
   }
 }

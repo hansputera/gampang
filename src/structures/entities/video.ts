@@ -1,6 +1,5 @@
 import { proto } from '@adiwajshing/baileys';
 import { BaseEntity } from '.';
-import { decryptMedia } from './_util';
 
 /**
  * TODO:
@@ -56,16 +55,5 @@ export class Video extends BaseEntity {
       'height': this.raw.height as number,
       'width': this.raw.width as number,
     };
-  }
-
-  /**
-   * Fetch encrypted url video file.
-   *
-   * @return {Promise<Buffer>}
-   */
-  public retrieveFile(): Promise<Buffer> {
-    return new Promise((resolve) => {
-      decryptMedia(this.encryptedUrl, this.key, 'video').then(resolve);
-    });
   }
 }
