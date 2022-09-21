@@ -1,14 +1,9 @@
-import makeWASocket, { AuthenticationState } from '@adiwajshing/baileys';
+import makeWASocket from '@adiwajshing/baileys';
 import type { Context } from '../structures';
 import type { IStore } from './stores';
 
 export type MakeWaSocketType = ReturnType<typeof makeWASocket>;
-export interface RawClient extends MakeWaSocketType {
-  getAuth(): {
-    state: AuthenticationState;
-    saveCreds: () => Promise<void>;
-  };
-}
+export type RawClient = MakeWaSocketType;
 
 type QrStoreType = 'file' | 'terminal' | 'web';
 

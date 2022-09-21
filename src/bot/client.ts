@@ -1,7 +1,6 @@
 import { DisconnectReason, UserFacingSocketConfig } from '@adiwajshing/baileys';
 import EventEmitter from 'events';
 import { Server } from 'node:http';
-import { unlink } from 'node:fs/promises';
 
 import type {
   ClientEvents,
@@ -13,7 +12,7 @@ import type {
 import { createLogger } from '../logger';
 import { createWA } from './createWA';
 import { GroupContext, MessageCollector } from '../structures';
-import { qrHandler } from '../utils';
+import { qrHandler, SessionManager } from '../utils';
 import { registerEvents } from './events';
 
 export declare interface Client {
@@ -34,7 +33,10 @@ export class Client extends EventEmitter {
    * @param {string} session Folder session path.
    * @param {ClientOptions} options Command Client options.
    */
-  constructor(private session: string, private options?: ClientOptions) {
+  constructor(
+    private session: SessionManager,
+    private options?: ClientOptions,
+  ) {
     super();
 
     if (typeof options !== 'object' || !Array.isArray(options.prefixes))
@@ -153,9 +155,7 @@ export class Client extends EventEmitter {
             break;
           case DisconnectReason.badSession:
             this.logger.error('Bad Session, removing sessions folder');
-            await unlink(this.session).catch((e) => {
-              this.logger.error('Fail to remove session folder:', e);
-            });
+            await this.session.remove();
             this.logger.warn('Reconnecting');
             this.raw = undefined;
             this.launch(options);
@@ -163,7 +163,7 @@ export class Client extends EventEmitter {
         }
       }
 
-      await this.raw?.getAuth().saveCreds();
+      await this.session.save();
     });
 
     registerEvents(this);
