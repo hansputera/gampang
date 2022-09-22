@@ -30,7 +30,7 @@ export declare interface Client {
 export class Client extends EventEmitter {
   /**
    * @constructor
-   * @param {string} session Folder session path.
+   * @param {SessionManager}} session Session Manager instance.
    * @param {ClientOptions} options Command Client options.
    */
   constructor(
