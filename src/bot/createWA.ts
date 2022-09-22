@@ -1,27 +1,21 @@
-import makeWASocket, {
-  useMultiFileAuthState,
-  UserFacingSocketConfig,
-} from '@adiwajshing/baileys';
+import makeWASocket, { UserFacingSocketConfig } from '@adiwajshing/baileys';
 import { RawClient } from '../@typings';
+import { SessionManager } from '../utils';
 
 /**
  * Create raw WA.
- * @param {string} folder Session folder.
+ * @param {SessionManager} session Session manager.
  * @param {UserFacingSocketConfig} config Baileys config.
  * @return {Promise<RawClient>}
  */
 export const createWA = async (
-  folder: string,
+  session: SessionManager,
   config: Omit<UserFacingSocketConfig, 'auth'>,
 ): Promise<RawClient> => {
-  const auth = await useMultiFileAuthState(folder);
   const bot = makeWASocket({
     ...config,
-    'auth': auth.state,
+    'auth': session.auth,
   });
 
-  return {
-    ...bot,
-    getAuth: () => auth,
-  };
+  return bot;
 };

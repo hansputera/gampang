@@ -1,8 +1,12 @@
-const { Client } = require('../dist/index.js');
+const { Client, SessionManager } = require('../dist/index.js');
 const path = require('node:path');
 const sharp = require('sharp');
 
-const client = new Client(path.resolve(__dirname, 'sessions'), {
+const session = new SessionManager(
+  path.resolve(__dirname, '..', 'sessions'),
+  'folder',
+);
+const client = new Client(session, {
   'qr': {
     'store': 'web',
     'options': {
@@ -32,21 +36,17 @@ client.command(
 
 client.command(
   'test',
+  (ctx) => {
+    ctx.reply('pong');
+  },
   {
     aliases: ['-', 'ping', 'pong'],
     cooldown: 1_000,
-  },
-  (ctx) => {
-    ctx.reply('pong');
   },
 );
 
 client.command(
   'debug',
-  {
-    'aliases': ['hi', 'hey', '_'],
-    'cooldown': 1_000,
-  },
   async (ctx) => {
     if (!ctx.getReply())
       return ctx.reply(
@@ -75,6 +75,10 @@ client.command(
         'Something was wrong, try again please?\n' + 'Error: ' + e.message,
       );
     }
+  },
+  {
+    'aliases': ['hi', 'hey', '_'],
+    'cooldown': 1_000,
   },
 );
 
