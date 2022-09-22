@@ -27,16 +27,22 @@ atau
 Sangatlah gampang sekali untuk menggunakannya
 
 ```js
-const { Client } = require('gampang');
+const { Client, SessionManager } = require('gampang');
 
-const client = new Client('folder_session', {
-  'qr': {
-    'store': 'file',
-    'options': {
-      'dest': 'qr.png',
+const client = new Client(
+  new SessionManager(
+    'folder_session', //  ini bisa di-isi dengan path session (bisa folder, dan file)
+    'folder', // isi 'file' jika ingin menggunakan file.
+  ),
+  {
+    'qr': {
+      'store': 'file',
+      'options': {
+        'dest': 'qr.png',
+      },
     },
   },
-}); // 'folder_session' bisa arahin ke direktori session kalian yah
+); // 'folder_session' bisa arahin ke direktori session kalian yah
 
 client.on('message', async (context) => {
   if (context.text.toLowerCase() === 'halo') {
