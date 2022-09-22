@@ -50,6 +50,9 @@ export class Client extends EventEmitter {
     if (options.dataStore) this.dataStores = options.dataStore;
     // TODO: change it.
     else this.dataStores = new Map() as unknown as ClientOptions['dataStore'];
+
+    if (!(session instanceof SessionManager))
+      throw new TypeError("'session' must be SessionManager!");
   }
 
   public commands: Map<string, Command> = new Map();
@@ -64,16 +67,16 @@ export class Client extends EventEmitter {
   /**
    * Add a command
    * @param {string} name Command name.
-   * @param {CommandOptions} opts Command options.
    * @param {Function} func Command function.
+   * @param {CommandOptions} opts Command options.
    * @return {CommandClient}
    */
   command(
     name: string,
+    func: Command['run'],
     opts: CommandOptions = {
       'cooldown': 5000,
     },
-    func: Command['run'],
   ): Client {
     if (typeof opts !== 'object')
       opts = {
@@ -115,6 +118,11 @@ export class Client extends EventEmitter {
         'logger': this.logger,
       };
     else if (!options.logger) options.logger = this.logger;
+
+    if (!this.session.auth) {
+      this.logger.debug('Refreshing authentiction state');
+      await this.session.init();
+    }
 
     this.raw = await createWA(this.session, options);
 

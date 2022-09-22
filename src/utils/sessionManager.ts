@@ -21,6 +21,7 @@ export class SessionManager {
   /**
    * @constructor
    * @param {string} path Session Path
+   * @param {SessionType} type Session store type
    */
   constructor(private path: string, private type: SessionType = 'folder') {
     if (typeof path !== 'string') throw new TypeError('Invalid path');
@@ -31,37 +32,37 @@ export class SessionManager {
       throw new TypeError('Invalid session type');
 
     this.type = type.toLowerCase() as SessionType;
-    this.#init();
   }
 
   /**
    * Initialize session manager.
-   * @return {void}
+   * @return {Promise<SessionManager>}
    */
-  #init(): void {
-    const stat = fs.statSync(this.path);
-    if (stat.isDirectory() && this.type === 'file') {
+  async init(): Promise<SessionManager> {
+    const stat = await fs.promises.stat(this.path).catch(() => undefined);
+    if (stat?.isDirectory() && this.type === 'file') {
       throw new TypeError(`'${this.path}' is folder!`);
-    } else if (stat.isFile() && this.type === 'folder') {
+    } else if (stat?.isFile() && this.type === 'folder') {
       throw new TypeError(`'${this.path}' is file!`);
     }
 
     switch (this.type) {
-      case 'file': {
-        useMultiFileAuthState(this.path).then((state) => {
-          this.#auth = state.state;
-          this.save = state.saveCreds;
-        });
+      case 'folder': {
+        const state = await useMultiFileAuthState(this.path);
+
+        this.#auth = state.state;
+        this.save = state.saveCreds;
         break;
       }
-      case 'folder': {
+      case 'file': {
         const state = useSingleFileLegacyAuthState(this.path);
         this.#auth = state.state as unknown as AuthenticationState;
         this.save = state.saveState;
+        break;
       }
     }
 
-    return;
+    return this;
   }
 
   /**
