@@ -91,6 +91,18 @@ export class SessionManager {
   }
 
   /**
+   * Use external authentication state.
+   * @param {AuthenticationState} auth Authentication state data.
+   * @return {boolean}
+   */
+  useAuth(auth: AuthenticationState): boolean {
+    if (!auth.creds || !auth.keys) return false;
+    this.#auth = auth;
+
+    return !!this.#auth;
+  }
+
+  /**
    * Get current authentication state.
    * @return {AuthenticationCreds}
    */
