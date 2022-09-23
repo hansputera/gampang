@@ -247,7 +247,7 @@ export class Context {
       ? this.rawMessage.key.participant.replace(/@.+/gi, '')
       : this.isFromMe
       ? (this.client.raw?.user?.id
-          .replace(/@.+/gi, '')
+          ?.replace(/@.+/gi, '')
           .split(':')
           .at(0) as string)
       : this.getCurrentJid();
@@ -552,7 +552,7 @@ export class ContextInfo extends Context {
     super(client, {
       'key': {
         'fromMe':
-          client.raw?.user?.id.replace(/@.+/gi, '').split(':')[0] ===
+          client.raw?.user?.id?.replace(/@.+/gi, '').split(':')[0] ===
           raw.participant?.replace(/@.+/gi, ''),
         'id': raw.stanzaId,
         'remoteJid': remoteJid,
