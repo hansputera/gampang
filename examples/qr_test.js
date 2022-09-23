@@ -3,8 +3,8 @@ const path = require('node:path');
 const sharp = require('sharp');
 
 const session = new SessionManager(
-  path.resolve(__dirname, '..', 'sessions'),
-  'folder',
+  path.resolve(__dirname, '..', 'tes.json'),
+  'file',
 );
 const client = new Client(session, {
   'qr': {
@@ -18,9 +18,6 @@ const client = new Client(session, {
 
 client.command(
   'col',
-  {
-    aliases: ['collector'],
-  },
   async (ctx) => {
     const collector = ctx.getCollector({
       'max': 5,
@@ -31,6 +28,9 @@ client.command(
     await collector.wait();
 
     console.log(collector.contexts[0].text);
+  },
+  {
+    aliases: ['collector'],
   },
 );
 

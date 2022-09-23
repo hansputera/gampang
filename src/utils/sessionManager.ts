@@ -1,11 +1,13 @@
 import {
   AuthenticationState,
   useMultiFileAuthState,
-  useSingleFileLegacyAuthState,
+  useSingleFileAuthState,
 } from '@adiwajshing/baileys';
 import * as fs from 'node:fs';
 
 type SessionType = 'file' | 'folder';
+
+// TODO: create own useSingleFileAuthState function.
 
 /**
  * @class SessionManager
@@ -55,8 +57,8 @@ export class SessionManager {
         break;
       }
       case 'file': {
-        const state = useSingleFileLegacyAuthState(this.path);
-        this.#auth = state.state as unknown as AuthenticationState;
+        const state = useSingleFileAuthState(this.path);
+        this.#auth = state.state;
         this.save = state.saveState;
         break;
       }

@@ -15,10 +15,14 @@ export const qrHandler = async (
       if (err) console.error('Something was wrong:', err);
     });
   } else if (qrOptions?.store === 'web') {
+    if (client.qrServer) {
+      client.qrServer.close();
+      client.qrServer = undefined;
+    }
     if (!qrOptions.options?.port || typeof qrOptions.options?.port !== 'number')
       throw new TypeError('Please fill QR Server Port number');
 
-    if (!client.qrServer) client.qrServer = http.createServer();
+    client.qrServer = http.createServer();
     let port = qrOptions.options.port;
 
     client.qrServer.on('request', async (_, res) => {
