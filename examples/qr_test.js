@@ -17,6 +17,24 @@ const client = new Client(session, {
 });
 
 client.command(
+  'col',
+  {
+    aliases: ['collector'],
+  },
+  async (ctx) => {
+    const collector = ctx.getCollector({
+      'max': 5,
+      'validation': async () => true,
+    });
+
+    collector.start();
+    await collector.wait();
+
+    console.log(collector.contexts[0].text);
+  },
+);
+
+client.command(
   'test',
   (ctx) => {
     ctx.reply('pong');
