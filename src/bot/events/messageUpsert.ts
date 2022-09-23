@@ -4,9 +4,6 @@ import { Client } from '../client';
 
 export const messageUpsertHandler = async (client: Client) => {
   client.raw?.ev.on('messages.upsert', async ({ messages }) => {
-    // prevent https://github.com/hansputera/gampang/issues/2#issue-1383418660
-    if (!client.raw?.user) return;
-
     const context = new Context(client, messages[0]);
 
     const collector = await messageCollector(context);
