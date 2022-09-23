@@ -30,7 +30,7 @@ export class BaseEntity {
    * @return {string}
    */
   public get encryptedUrl(): string {
-    return this.raw.url + (this.raw.directPath as string);
+    return this.raw.url + (this.raw.directPath || '');
   }
 
   /**
