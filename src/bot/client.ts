@@ -83,6 +83,12 @@ export class Client extends EventEmitter {
         'cooldown': 5000,
       };
 
+    if (!opts.cooldownMessage)
+      opts.cooldownMessage = async (ctx) => {
+        await ctx.reply('Please slow down, bro!');
+        return;
+      };
+
     if (this.commands.has(name)) {
       this.logger.warn(
         'Command',

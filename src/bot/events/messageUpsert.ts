@@ -31,15 +31,25 @@ export const messageUpsertHandler = async (client: Client) => {
       if (!cooldown)
         await context.client.dataStores?.set(
           cooldownKey,
-          (Date.now() + (cmd.options?.cooldown || 5_000)).toString(),
+          JSON.stringify({
+            'time': (Date.now() + (cmd.options?.cooldown || 5_000)).toString(),
+            'warned': 0,
+          }),
         );
-      else return;
+      else if (!JSON.parse(cooldown).warned) {
+        await context.client.dataStores?.set(
+          cooldownKey,
+          JSON.stringify({
+            ...JSON.parse(cooldown),
+            'warned': 1,
+          }),
+        );
 
-      if (context.client.dataStores instanceof Map) {
-        setTimeout(() => {
-          context.client.dataStores?.delete(cooldownKey);
-        }, cmd.options?.cooldown || 5_000);
-      }
+        cmd.options?.cooldownMessage &&
+          (await cmd.options.cooldownMessage(context));
+      } else if (JSON.parse(cooldown).time <= Date.now()) {
+        await context.client.dataStores?.delete(cooldownKey);
+      } else return;
 
       cmd.run(context);
     }
