@@ -36,7 +36,11 @@ export const qrHandler = async (
 
     client.qrServer?.listen(port, '0.0.0.0');
   } else if (qrOptions?.store === 'terminal') {
-    console.log(await qrcode.toString(qr));
+    console.log(
+      await qrcode.toString(qr, {
+        'type': 'terminal',
+      }),
+    );
   }
   return;
 };
