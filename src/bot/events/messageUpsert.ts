@@ -10,7 +10,11 @@ export const messageUpsertHandler = async (client: Client) => {
     if (!collector) return;
 
     const cmd = context.getCommand();
-    if (cmd) {
+    if (
+      cmd &&
+      typeof cmd.options === 'object' &&
+      typeof cmd.run === 'function'
+    ) {
       if (
         (cmd.options?.groupOnly && !context.isGroup) ||
         (cmd.options?.privateOnly && !context.isPM) ||

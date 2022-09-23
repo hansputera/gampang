@@ -78,6 +78,8 @@ export class Client extends EventEmitter {
       'cooldown': 5000,
     },
   ): Client {
+    if (typeof name !== 'string' || typeof func !== 'function')
+      throw new TypeError('Name, and command function should not empty!');
     if (typeof opts !== 'object')
       opts = {
         'cooldown': 5000,
