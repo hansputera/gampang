@@ -47,5 +47,8 @@
     "ignore": [
       "./examples/sessions/*"
     ]
+  },
+  "repository": {
+    "url": "https://github.com/hansputera/gampang.git"
   }
 }
