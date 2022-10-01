@@ -5,7 +5,7 @@ import {
 } from '@adiwajshing/baileys';
 import * as fs from 'node:fs';
 
-type SessionType = 'file' | 'folder';
+export type SessionType = 'file' | 'folder';
 
 // TODO: create own useSingleFileAuthState function.
 

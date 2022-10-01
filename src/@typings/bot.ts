@@ -5,7 +5,7 @@ import type { IStore } from './stores';
 export type MakeWaSocketType = ReturnType<typeof makeWASocket>;
 export type RawClient = MakeWaSocketType;
 
-type QrStoreType = 'file' | 'terminal' | 'web';
+export type QrStoreType = 'file' | 'terminal' | 'web';
 
 export interface ClientOptions {
   qr?: {
