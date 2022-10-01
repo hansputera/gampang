@@ -1,20 +1,18 @@
 {
-    "$schema": "https://typedoc.org/schema.json",
-    "entryPoints": [
-        "./src"
-    ],
-    "out": "./docs",
-    "exclude": [
-        "sessions/",
-        "examples/",
-        "dist/",
-        "**/*.json",
-        "**/*.yml",
-        "**/*.yaml",
-        "**/*.js"
-    ],
-    "includeVersion": true,
-    "pretty": true,
-    "commentStyle": "all",
-    "plugin": ["typedoc-plugin-mdn-links"]
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["./src"],
+  "out": "./docs",
+  "exclude": [
+    "sessions/",
+    "examples/",
+    "dist/",
+    "**/*.json",
+    "**/*.yml",
+    "**/*.yaml",
+    "**/*.js"
+  ],
+  "includeVersion": true,
+  "pretty": true,
+  "commentStyle": "all",
+  "plugin": ["typedoc-plugin-mdn-links"]
 }
