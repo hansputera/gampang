@@ -7,7 +7,7 @@ export const messageUpsertHandler = async (client: Client) => {
 
     const isAllow = await client.middleware.exec(context);
     if (!isAllow) return;
-    
+
     client.emit('message', context);
   });
 };
