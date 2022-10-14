@@ -14,6 +14,9 @@ import { createWA } from './createWA';
 import { GroupContext, MessageCollector } from '../structures';
 import { qrHandler, SessionManager } from '../utils';
 import { registerEvents } from './events';
+import { MiddlewareManager } from './middleware';
+
+import { messageCollector } from '../middlewares';
 
 export declare interface Client {
   on<U extends keyof ClientEvents>(event: U, listener: ClientEvents[U]): this;
@@ -53,6 +56,8 @@ export class Client extends EventEmitter {
 
     if (!(session instanceof SessionManager))
       throw new TypeError("'session' must be SessionManager!");
+
+    this.middleware.use(messageCollector);
   }
 
   public commands: Map<string, Command> = new Map();
@@ -61,6 +66,7 @@ export class Client extends EventEmitter {
   public collectors: Map<string, MessageCollector> = new Map();
   public groups: Map<string, GroupContext> = new Map();
   public dataStores?: ClientOptions['dataStore'];
+  public middleware: MiddlewareManager = new MiddlewareManager();
 
   qrServer?: Server;
 
@@ -87,7 +93,7 @@ export class Client extends EventEmitter {
 
     if (!opts.cooldownMessage)
       opts.cooldownMessage = async (ctx) => {
-        await ctx.reply('Please slow down, bro!');
+        await ctx.reply('Please slow down!');
         return;
       };
 

@@ -1,6 +1,7 @@
+import type { MiddlewareFunc } from '../@typings';
 import { Context } from '../structures';
 
-export const messageCollector = async (ctx: Context) => {
+export const messageCollector: MiddlewareFunc = async (ctx: Context) => {
   const session = ctx.client.collectors.get(
     ctx.authorNumber.concat('-', ctx.getCurrentJid()),
   );
