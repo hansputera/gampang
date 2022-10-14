@@ -26,3 +26,10 @@ export interface ClientEvents {
   'logout': () => Promise<void> | void;
   'message': (context: Context) => Promise<void | void>;
 }
+
+/**
+ * Middleware Function
+ * @param {Context} ctx Message context.
+ * @return {Promise<boolean>} You should return boolean or an Error
+ */
+export type MiddlewareFunc = (ctx: Context) => Promise<boolean>;
