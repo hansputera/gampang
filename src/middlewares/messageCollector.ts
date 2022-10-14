@@ -6,7 +6,6 @@ export const messageCollector = async (ctx: Context) => {
   );
 
   if (session && (await session.validate(ctx))) {
-    session.events.emit('new', ctx);
     session.contexts.push(ctx);
     if (session.contexts.length >= session.maxMessages) {
       session.destroy();

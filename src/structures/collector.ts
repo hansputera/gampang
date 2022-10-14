@@ -1,12 +1,19 @@
 import type { Context } from './context';
 import type { CollectorOptions } from '../@typings';
-import EventEmitter from 'events';
 
 /**
  * @class MessageCollector
  */
 export class MessageCollector {
-  public runner?: NodeJS.Timeout;
+  #runner?: NodeJS.Timeout;
+
+  /**
+   * MessageCollector runner
+   * @type {NodeJS.Timeout | undefined}
+   */
+  get runner(): NodeJS.Timeout | undefined {
+    return this.#runner;
+  }
   /**
    * Message collector session key
    */
@@ -37,8 +44,6 @@ export class MessageCollector {
     this.validate = this.options.validation;
   }
 
-  public events: EventEmitter = new EventEmitter();
-
   /**
    * Collected context
    */
@@ -68,11 +73,11 @@ export class MessageCollector {
    * @return {void}
    */
   public start(): void {
-    if (this.runner) {
+    if (this.#runner) {
       throw new Error('This instance is already started');
     }
 
-    this.runner = setTimeout(() => {
+    this.#runner = setTimeout(() => {
       this.destroy();
     }, this.time);
     this.ctx.client.collectors.set(this.key, this);
@@ -84,14 +89,13 @@ export class MessageCollector {
    * @return {void}
    */
   public destroy(): void {
-    if (this.runner) {
-      clearTimeout(this.runner);
-      this.runner = undefined;
+    if (this.#runner) {
+      clearTimeout(this.#runner);
+      this.#runner = undefined;
     }
     if (this.ctx.client.collectors.has(this.key)) {
       this.ctx.client.collectors.delete(this.key);
     }
-    this.events.emit('end');
   }
 
   /**
@@ -99,7 +103,11 @@ export class MessageCollector {
    */
   public async wait(): Promise<boolean> {
     return await new Promise((resolve) => {
-      this.events.on('end', () => resolve(true));
+      while (this.runner) {
+        // just wait.
+      }
+
+      resolve(true);
     });
   }
 }
