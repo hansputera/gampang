@@ -24,7 +24,7 @@ export class Video extends BaseEntity {
    * @return {boolean}
    */
   public get playback(): boolean {
-    return Boolean(this.raw.gifPlayback);
+    return !!this.raw.gifPlayback;
   }
 
   /**
