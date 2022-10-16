@@ -1,9 +1,10 @@
 import {
   AuthenticationState,
   useMultiFileAuthState,
-  useSingleFileAuthState,
 } from '@adiwajshing/baileys';
 import * as fs from 'node:fs';
+import * as path from 'node:path';
+import { readSingleAuthFile } from '../session';
 
 export type SessionType = 'file' | 'folder';
 
@@ -57,9 +58,19 @@ export class SessionManager {
         break;
       }
       case 'file': {
-        const state = useSingleFileAuthState(this.path);
-        this.#auth = state.state;
-        this.save = state.saveState;
+        let state = await readSingleAuthFile(this.path);
+
+        if (state) {
+          if (path.extname(this.path).length) {
+            this.path = this.path.replace(path.extname(this.path), '');
+          }
+
+          this.#auth = state.state;
+        }
+        state = await useMultiFileAuthState(this.path);
+        state.state = this.#auth;
+        this.save = state.saveCreds;
+
         break;
       }
     }

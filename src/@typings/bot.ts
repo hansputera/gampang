@@ -1,4 +1,4 @@
-import makeWASocket from '@adiwajshing/baileys';
+import makeWASocket, { AuthenticationState } from '@adiwajshing/baileys';
 import type { Context } from '../structures';
 import type { IStore } from './stores';
 
@@ -36,3 +36,8 @@ export interface ClientEvents {
  * @return {Promise<boolean>} You should return boolean or an Error
  */
 export type MiddlewareFunc = (ctx: Context) => Promise<boolean>;
+
+export type AuthState = {
+  state: AuthenticationState;
+  saveCreds: () => Promise<void>;
+};
