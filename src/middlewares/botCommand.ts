@@ -1,5 +1,8 @@
-import { MiddlewareFunc } from '../@typings';
-import { Context } from '../structures';
+import { format as textFormat } from 'node:util';
+
+import type { MiddlewareFunc } from '../@typings';
+import type { Context } from '../structures';
+import { botCommandCooldown } from './botCommand.cooldown';
 
 export const botCommand: MiddlewareFunc = async (context: Context) => {
   const cmd = context.getCommand();
@@ -12,6 +15,21 @@ export const botCommand: MiddlewareFunc = async (context: Context) => {
         context.client.getOptions()?.owners?.indexOf(context.authorNumber) ===
           -1)
     ) {
+      return false;
+    }
+
+    try {
+      const opts = context.client.getOptions();
+      if (typeof opts?.middlewares?.cooldown === 'function') {
+        return await opts.middlewares.cooldown(context);
+      }
+
+      await botCommandCooldown(context, cmd);
+    } catch (err: unknown) {
+      if ((err as Error).message) {
+        await context.reply(textFormat('Error: %s', (err as Error).message));
+      }
+
       return false;
     }
 
