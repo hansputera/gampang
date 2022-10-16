@@ -1,5 +1,5 @@
 import makeWASocket, { AuthenticationState } from '@adiwajshing/baileys';
-import type { Context } from '../structures';
+import type { Context, MessageCollector } from '../structures';
 import type { IStore } from './stores';
 
 export type MakeWaSocketType = ReturnType<typeof makeWASocket>;
@@ -23,11 +23,17 @@ export interface ClientOptions {
   };
 }
 
+export type CollectorEventState = 'create' | 'end';
+
 export interface ClientEvents {
   'qr': (code: string) => Promise<void> | void;
   'ready': () => Promise<void> | void;
   'logout': () => Promise<void> | void;
   'message': (context: Context) => Promise<void | void>;
+  'collector': (
+    state: CollectorEventState,
+    collector: MessageCollector,
+  ) => Promise<void> | void;
 }
 
 /**

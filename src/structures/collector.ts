@@ -1,5 +1,7 @@
 import type { Context } from './context';
-import type { CollectorOptions } from '../@typings';
+import type { CollectorEventState, CollectorOptions } from '../@typings';
+
+type _resolvefunc = (value: boolean | PromiseLike<boolean>) => void;
 
 /**
  * @class MessageCollector
@@ -7,13 +9,6 @@ import type { CollectorOptions } from '../@typings';
 export class MessageCollector {
   #runner?: NodeJS.Timeout;
 
-  /**
-   * MessageCollector runner
-   * @type {NodeJS.Timeout | undefined}
-   */
-  get runner(): NodeJS.Timeout | undefined {
-    return this.#runner;
-  }
   /**
    * Message collector session key
    */
@@ -81,6 +76,7 @@ export class MessageCollector {
       this.destroy();
     }, this.time);
     this.ctx.client.collectors.set(this.key, this);
+    this.ctx.client.emit('collector', 'create', this);
   }
 
   /**
@@ -92,6 +88,7 @@ export class MessageCollector {
     if (this.#runner) {
       clearTimeout(this.#runner);
       this.#runner = undefined;
+      this.ctx.client.emit('collector', 'end', this);
     }
     if (this.ctx.client.collectors.has(this.key)) {
       this.ctx.client.collectors.delete(this.key);
@@ -103,11 +100,27 @@ export class MessageCollector {
    */
   public async wait(): Promise<boolean> {
     return await new Promise((resolve) => {
-      while (this.runner) {
-        // just wait.
-      }
-
-      resolve(true);
+      this.ctx.client.on('collector', (s, c) => this.#onEnd(s, c, resolve));
     });
+  }
+
+  /**
+   * Just end function.
+   * @param {CollectorEventState} state Collector event state.
+   * @param {MessageCollector} _collector Message collector class
+   * @param {_resolvefunc} resolve resolve function.
+   * @return {void}
+   */
+  #onEnd(
+    state: CollectorEventState,
+    _collector: MessageCollector,
+    resolve: _resolvefunc,
+  ): void {
+    if (state === 'end') {
+      this.ctx.client.removeListener('collector', (s, c) =>
+        this.#onEnd(s, c, resolve),
+      );
+      resolve(true);
+    }
   }
 }
