@@ -11,3 +11,4 @@ sessions
 docs
 .npmrc
 tsup.config.ts
+typedoc.json
