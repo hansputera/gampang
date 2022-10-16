@@ -25,7 +25,7 @@ export class MiddlewareManager {
   async exec(context: Context): Promise<boolean> {
     const middlewares = (
       await Promise.allSettled(this.middlewares.map((func) => func(context)))
-    ).filter((middleware) => middleware.status === 'rejected');
+    ).filter((middleware) => middleware.status === 'fulfilled');
 
     if (middlewares.length < this.middlewares.length) {
       return false;
