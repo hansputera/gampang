@@ -1,7 +1,8 @@
 import p from 'pino';
-import mainLogger from '@adiwajshing/baileys/lib/Utils/logger';
 
-export type PinoLogger = ReturnType<typeof mainLogger.child>;
+export type PinoLogger = p.Logger<{
+  timestamp: () => string;
+}>;
 
 /**
  * Create pino logger.
@@ -11,9 +12,9 @@ export type PinoLogger = ReturnType<typeof mainLogger.child>;
  */
 export const createLogger = (
   service: string,
-  options?: p.ChildLoggerOptions,
+  options?: p.LoggerOptions,
 ): PinoLogger => {
-  return mainLogger.child(mainLogger, {
+  return p({
     'name': service.replace(/\s+/g, '_'),
     'enabled': true,
     'transport': {
@@ -24,6 +25,7 @@ export const createLogger = (
         'hideObject': true,
       },
     },
+    timestamp: () => `,"time":"${new Date(Date.now()).toISOString()}"`,
     ...options,
   });
 };
