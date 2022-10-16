@@ -18,6 +18,9 @@ export interface ClientOptions {
   dataStore?: IStore<string, unknown>;
   prefixes?: string[];
   owners?: string[];
+  middlewares?: {
+    cooldown?: MiddlewareFunc;
+  };
 }
 
 export interface ClientEvents {
