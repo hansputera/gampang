@@ -4,9 +4,10 @@ import {
 } from '@adiwajshing/baileys';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { AdapterFn } from '../@typings';
 import { readSingleAuthFile } from '../session';
 
-export type SessionType = 'file' | 'folder';
+export type SessionType = 'file' | 'folder' | 'adapter';
 
 /**
  * @class SessionManager
@@ -71,8 +72,31 @@ export class SessionManager {
 
         break;
       }
+      case 'adapter': {
+        if (typeof this.save !== 'function') {
+          throw new Error(
+            'Please do `SessionManager.registerAdapter(adapterFn)` first!',
+          );
+        }
+
+        // the adapter was initialized on `.registerAdapter(fn)`
+        break;
+      }
     }
 
+    return this;
+  }
+
+  /**
+   * Register your favourite adapter.
+   * @param {AdapterFn} adapterFn The adapter function.
+   * @return {SessionManager}
+   */
+  registerAdapter(adapterFn: AdapterFn): SessionManager {
+    if (typeof adapterFn !== 'function')
+      throw new TypeError('`adapterFn` must be function!');
+
+    this.save = () => adapterFn.bind(this)(this.#auth);
     return this;
   }
 

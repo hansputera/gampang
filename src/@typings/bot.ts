@@ -41,3 +41,10 @@ export type AuthState = {
   state: AuthenticationState;
   saveCreds: () => Promise<void>;
 };
+
+/**
+ * Authentication adapter function
+ * @param {state} AuthenticationState WhatsApp Authentication State
+ * @return {Promise<void>}
+ */
+export type AdapterFn = (state: AuthenticationState) => Promise<void>;
