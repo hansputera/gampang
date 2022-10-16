@@ -194,3 +194,5 @@ export class Client extends EventEmitter {
     registerEvents(this);
   }
 }
+
+export { MiddlewareManager };
