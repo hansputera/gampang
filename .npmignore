@@ -7,6 +7,7 @@ tsconfig.json
 .husky
 src
 examples
+.eslintignore
 sessions
 docs
 .npmrc
