@@ -8,8 +8,6 @@ import { readSingleAuthFile } from '../session';
 
 export type SessionType = 'file' | 'folder';
 
-// TODO: create own useSingleFileAuthState function.
-
 /**
  * @class SessionManager
  * @description Support legacy, and modern session
