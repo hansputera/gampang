@@ -1,6 +1,7 @@
 import { DisconnectReason, UserFacingSocketConfig } from '@adiwajshing/baileys';
 import EventEmitter from 'events';
 import { Server } from 'node:http';
+import { format as textFormat } from 'node:util';
 
 import type {
   ClientEvents,
@@ -8,15 +9,17 @@ import type {
   ClientOptions,
   Command,
   CommandOptions,
+  BaileysEventList,
+  CustomEventFunc,
 } from '../@typings';
 import { createLogger, PinoLogger } from '../logger';
 import { createWA } from './createWA';
 import { GroupContext, MessageCollector } from '../structures';
 import { qrHandler, SessionManager } from '../utils';
-import { registerEvents } from './events';
 import { MiddlewareManager } from './middleware';
 
 import { messageCollector } from '../middlewares';
+import { messageUpsertEvent } from '../events';
 
 export declare interface Client {
   on<U extends keyof ClientEvents>(event: U, listener: ClientEvents[U]): this;
@@ -70,6 +73,20 @@ export class Client extends EventEmitter {
 
   qrServer?: Server;
 
+  /**
+   * Add your custom event handler.
+   * @param {BaileysEventList} event Listener baileys name
+   * @param {CustomEventFunc} func Listener function
+   * @return {Client}
+   */
+  addCustomEvent<T extends BaileysEventList>(
+    event: T,
+    func: CustomEventFunc<T>,
+  ): Client {
+    this.logger.info(textFormat('CustomEvent [%s] added', event));
+    this.raw?.ev?.on(event, (arg) => func(this, arg));
+    return this;
+  }
   /**
    * Add a command
    * @param {string} name Command name.
@@ -188,10 +205,10 @@ export class Client extends EventEmitter {
         }
       }
 
+      this.addCustomEvent('messages.upsert', messageUpsertEvent);
+
       await this.session.save();
     });
-
-    registerEvents(this);
   }
 }
 
