@@ -9,7 +9,7 @@ import type {
   Command,
   CommandOptions,
 } from '../@typings';
-import { createLogger } from '../logger';
+import { createLogger, PinoLogger } from '../logger';
 import { createWA } from './createWA';
 import { GroupContext, MessageCollector } from '../structures';
 import { qrHandler, SessionManager } from '../utils';
@@ -61,7 +61,7 @@ export class Client extends EventEmitter {
   }
 
   public commands: Map<string, Command> = new Map();
-  public logger = createLogger('Gampang');
+  public logger: PinoLogger = createLogger('Gampang');
   public raw?: RawClient;
   public collectors: Map<string, MessageCollector> = new Map();
   public groups: Map<string, GroupContext> = new Map();
@@ -138,7 +138,10 @@ export class Client extends EventEmitter {
       await this.session.init();
     }
 
-    this.raw = await createWA(this.session, options);
+    this.raw = await createWA(
+      this.session,
+      options as Omit<UserFacingSocketConfig, 'auth'>,
+    );
 
     this.raw.ev.on('connection.update', async (conn) => {
       if (conn.connection === 'open' && this.raw && this.raw.user?.id) {
