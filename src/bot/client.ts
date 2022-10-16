@@ -203,13 +203,21 @@ export class Client extends EventEmitter {
             this.raw = undefined;
             this.launch(options);
             break;
+          default: {
+            this.logger.warn('Unhandled DisconnectReason');
+            this.raw = undefined;
+            this.logger.info('Trying to reconnect');
+            this.launch(options);
+          }
         }
       }
 
-      this.addCustomEvent('messages.upsert', messageUpsertEvent);
-
       await this.session.save();
     });
+
+    if (this.raw) {
+      this.addCustomEvent('messages.upsert', messageUpsertEvent);
+    }
   }
 }
 
