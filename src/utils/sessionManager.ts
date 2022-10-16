@@ -96,7 +96,7 @@ export class SessionManager {
     if (typeof adapterFn !== 'function')
       throw new TypeError('`adapterFn` must be function!');
 
-    this.save = () => adapterFn.bind(this)(this.#auth);
+    this.save = () => adapterFn.bind(this)(this.path, this.#auth);
     return this;
   }
 
