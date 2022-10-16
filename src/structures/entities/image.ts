@@ -1,14 +1,14 @@
 import { proto } from '@adiwajshing/baileys';
-import { BaseEntity } from '.';
+import { BaseEntity } from './baseEntity';
 
 /**
  * @class Image
  */
 export class Image extends BaseEntity {
   /**
-   * @param {proto.IImageMessage} raw
+   * @param {proto..Message.IImageMessage} raw
    */
-  constructor(public raw: proto.IImageMessage) {
+  constructor(public raw: proto.Message.IImageMessage) {
     super(raw);
   }
 

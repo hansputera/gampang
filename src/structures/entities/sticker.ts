@@ -1,14 +1,14 @@
 import { proto } from '@adiwajshing/baileys';
-import { BaseEntity } from '.';
+import { BaseEntity } from './baseEntity';
 
 /**
  * @class Sticker
  */
 export class Sticker extends BaseEntity {
   /**
-   * @param {proto.StickerMessage} raw - Sticker raw message
+   * @param {proto.Message.StickerMessage} raw - Sticker raw message
    */
-  constructor(public raw: proto.IStickerMessage) {
+  constructor(public raw: proto.Message.IStickerMessage) {
     super(raw);
   }
 

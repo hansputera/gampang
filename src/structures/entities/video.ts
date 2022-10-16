@@ -1,5 +1,5 @@
 import { proto } from '@adiwajshing/baileys';
-import { BaseEntity } from '.';
+import { BaseEntity } from './baseEntity';
 
 /**
  * TODO:
@@ -12,9 +12,9 @@ import { BaseEntity } from '.';
  */
 export class Video extends BaseEntity {
   /**
-   * @param {proto.IVideoMessage} raw
+   * @param {proto.Message.IVideoMessage} raw
    */
-  constructor(public raw: proto.IVideoMessage) {
+  constructor(public raw: proto.Message.IVideoMessage) {
     super(raw);
   }
 
