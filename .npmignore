@@ -10,3 +10,4 @@ examples
 sessions
 docs
 .npmrc
+tsup.config.ts
