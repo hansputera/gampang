@@ -62,6 +62,8 @@ export class Client extends EventEmitter {
 
     this.middleware.use(messageCollector);
     this.middleware.use(botCommand);
+
+    this.session.client = this;
   }
 
   public commands: Map<string, Command> = new Map();

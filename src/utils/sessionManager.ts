@@ -4,7 +4,8 @@ import {
 } from '@adiwajshing/baileys';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import { AdapterFn } from '../@typings';
+import type { AdapterFn } from '../@typings';
+import type { Client } from '../bot';
 import { readSingleAuthFile } from '../session';
 
 export type SessionType = 'file' | 'folder' | 'adapter';
@@ -15,6 +16,8 @@ export type SessionType = 'file' | 'folder' | 'adapter';
  */
 export class SessionManager {
   #auth!: AuthenticationState;
+  client!: Client;
+
   /**
    * Save current state.
    * @return {Promise<void> | void}
@@ -96,7 +99,7 @@ export class SessionManager {
     if (typeof adapterFn !== 'function')
       throw new TypeError('`adapterFn` must be function!');
 
-    this.save = () => adapterFn.bind(this)(this.path, this.#auth);
+    this.save = () => adapterFn.bind(this)(this.client, this.path, this.#auth);
     return this;
   }
 

@@ -1,4 +1,5 @@
 import makeWASocket, { AuthenticationState } from '@adiwajshing/baileys';
+import type { Client } from '../bot';
 import type { Context, MessageCollector } from '../structures';
 import type { IStore } from './stores';
 
@@ -50,11 +51,13 @@ export type AuthState = {
 
 /**
  * Authentication adapter function
+ * @param {Client} client Gampang Client
  * @param {string} path Authentication session path (if required by adapter)
  * @param {state} AuthenticationState WhatsApp Authentication State
  * @return {Promise<void>}
  */
 export type AdapterFn = (
+  client: Client,
   path: string,
   state: AuthenticationState,
 ) => Promise<void>;
