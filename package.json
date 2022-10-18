@@ -1,6 +1,6 @@
 {
   "name": "gampang",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "\"Gampang\" is a whatsapp bot framework. Based on @adiwajshing/baileys",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
