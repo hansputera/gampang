@@ -62,7 +62,7 @@ export class GroupParticipantContext {
    * @return {string | undefined}
    */
   public get pictureUrl(): string | undefined {
-    return this.raw.imgUrl;
+    return this.raw.imgUrl || undefined;
   }
 
   /**
