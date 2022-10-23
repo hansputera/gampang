@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@adiwajshing/baileys': ^4.4.0
+  '@adiwajshing/baileys': github:hansputera/Baileys
   '@types/node': ^18.11.0
   '@types/qrcode': ^1.5.0
   '@typescript-eslint/eslint-plugin': 5.40.0
@@ -24,7 +24,7 @@ specifiers:
   typescript: 4.8.4
 
 dependencies:
-  '@adiwajshing/baileys': 4.4.0_sharp@0.31.1
+  '@adiwajshing/baileys': github.com/hansputera/Baileys/77b013fb21e52a1074b25de750a5e3177afb4eea_sharp@0.31.1
   long: 5.2.0
   pino: 8.6.1
   pino-pretty: 9.1.1
@@ -49,43 +49,6 @@ devDependencies:
   typescript: 4.8.4
 
 packages:
-
-  /@adiwajshing/baileys/4.4.0_sharp@0.31.1:
-    resolution: {integrity: sha512-5gEnkJBgraLL0USzndxto8ofYhWyMFZVkpZ4rD1nPqrjBjGMt+k+YDpllpFpOfA0yxWZb6nPrr04ikQv++dz2Q==}
-    peerDependencies:
-      '@adiwajshing/keyed-db': ^0.2.4
-      jimp: ^0.16.1
-      link-preview-js: ^2.1.13
-      qrcode-terminal: ^0.12.0
-      sharp: ^0.30.5
-    peerDependenciesMeta:
-      '@adiwajshing/keyed-db':
-        optional: true
-      jimp:
-        optional: true
-      link-preview-js:
-        optional: true
-      qrcode-terminal:
-        optional: true
-      sharp:
-        optional: true
-    dependencies:
-      '@hapi/boom': 9.1.4
-      axios: 0.24.0
-      futoin-hkdf: 1.5.1
-      libsignal: github.com/adiwajshing/libsignal-node/11dbd962ea108187c79a7c46fe4d6f790e23da97
-      music-metadata: 7.13.0
-      node-cache: 5.1.2
-      pino: 7.11.0
-      protobufjs: 6.11.3
-      sharp: 0.31.1
-      ws: 8.9.0
-    transitivePeerDependencies:
-      - bufferutil
-      - debug
-      - supports-color
-      - utf-8-validate
-    dev: false
 
   /@esbuild/android-arm/0.15.11:
     resolution: {integrity: sha512-PzMcQLazLBkwDEkrNPi9AbjFt6+3I7HKbiYF2XtWQ7wItrHvEOeO3T8Am434zAozWtVP7lrTue1bEfc2nYWeCA==}
@@ -1135,13 +1098,13 @@ packages:
       flat-cache: 3.0.4
     dev: true
 
-  /file-type/16.5.4:
-    resolution: {integrity: sha512-/yFHK0aGjFEgDJjEKP0pWCplsPFPhwyfwevf/pVxiN0tmE4L9LmwWxWukdJSHdoCli4VgQLehjJtwQBnqmsKcw==}
-    engines: {node: '>=10'}
+  /file-type/18.0.0:
+    resolution: {integrity: sha512-jjMwFpnW8PKofLE/4ohlhqwDk5k0NC6iy0UHAJFKoY1fQeGMN0GDdLgHQrvCbSpMwbqzoCZhRI5dETCZna5qVA==}
+    engines: {node: '>=14.16'}
     dependencies:
       readable-web-to-node-stream: 3.0.2
-      strtok3: 6.3.0
-      token-types: 4.2.1
+      strtok3: 7.0.0
+      token-types: 5.0.1
     dev: false
 
   /fill-range/7.0.1:
@@ -1548,17 +1511,17 @@ packages:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
     dev: true
 
-  /music-metadata/7.13.0:
-    resolution: {integrity: sha512-EoDmAoK84Z9xarNEgjE7YQ4x7cIwHI9kOI3RdA2QlEHCsqBvBuBbIcP3vONGO/SBiPhXe5FF+IVAW+1T2owjEA==}
-    engines: {node: '>=10'}
+  /music-metadata/8.1.0:
+    resolution: {integrity: sha512-Jyleh/645rPISMo+bZ3jua5QbFVL32xA+x3KoJPZeRHcPTVizCVUtAqJLtLVaPPQrIrLjgagv3DQlpP67lb3Dw==}
+    engines: {node: ^14.13.1 || >=16.0.0}
     dependencies:
       '@tokenizer/token': 0.3.0
       content-type: 1.0.4
       debug: 4.3.4
-      file-type: 16.5.4
+      file-type: 18.0.0
       media-typer: 1.1.0
-      strtok3: 6.3.0
-      token-types: 4.2.1
+      strtok3: 7.0.0
+      token-types: 5.0.1
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -1727,9 +1690,9 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /peek-readable/4.1.0:
-    resolution: {integrity: sha512-ZI3LnwUv5nOGbQzD9c2iDG6toheuXSZP5esSHBjopsXH4dg19soufvpUGA3uohi5anFtGb2lhAVdHzH6R/Evvg==}
-    engines: {node: '>=8'}
+  /peek-readable/5.0.0:
+    resolution: {integrity: sha512-YtCKvLUOvwtMGmrniQPdO7MwPjgkFBtFIrmfSbYmYuq3tKDV/mcfAhBth1+C3ru7uXIZasc/pHnb+YDYNkkj4A==}
+    engines: {node: '>=14.16'}
     dev: false
 
   /picomatch/2.3.1:
@@ -2216,12 +2179,12 @@ packages:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
 
-  /strtok3/6.3.0:
-    resolution: {integrity: sha512-fZtbhtvI9I48xDSywd/somNqgUHl2L2cstmXCCif0itOf96jeW18MBSyrLuNicYQVkvpOxkZtkzujiTJ9LW5Jw==}
-    engines: {node: '>=10'}
+  /strtok3/7.0.0:
+    resolution: {integrity: sha512-pQ+V+nYQdC5H3Q7qBZAz/MO6lwGhoC2gOAjuouGf/VO0m7vQRh8QNMl2Uf6SwAtzZ9bOw3UIeBukEGNJl5dtXQ==}
+    engines: {node: '>=14.16'}
     dependencies:
       '@tokenizer/token': 0.3.0
-      peek-readable: 4.1.0
+      peek-readable: 5.0.0
     dev: false
 
   /sucrase/3.28.0:
@@ -2305,9 +2268,9 @@ packages:
       is-number: 7.0.0
     dev: true
 
-  /token-types/4.2.1:
-    resolution: {integrity: sha512-6udB24Q737UD/SDsKAHI9FCRP7Bqc9D/MQUV02ORQg5iskjtLJlZJNdN4kKtcdtwCeWIwIHDGaUsTsCCAa8sFQ==}
-    engines: {node: '>=10'}
+  /token-types/5.0.1:
+    resolution: {integrity: sha512-Y2fmSnZjQdDb9W4w4r1tswlMHylzWIeOKpx0aZH9BgGtACHhrk3OkT52AzwcuqTRBZtvvnTjDBh8eynMulu8Vg==}
+    engines: {node: '>=14.16'}
     dependencies:
       '@tokenizer/token': 0.3.0
       ieee754: 1.2.1
@@ -2554,4 +2517,46 @@ packages:
     dependencies:
       curve25519-js: 0.0.4
       protobufjs: 6.8.8
+    dev: false
+
+  github.com/hansputera/Baileys/77b013fb21e52a1074b25de750a5e3177afb4eea_sharp@0.31.1:
+    resolution: {tarball: https://codeload.github.com/hansputera/Baileys/tar.gz/77b013fb21e52a1074b25de750a5e3177afb4eea}
+    id: github.com/hansputera/Baileys/77b013fb21e52a1074b25de750a5e3177afb4eea
+    name: '@adiwajshing/baileys'
+    version: 5.0.0
+    prepare: true
+    requiresBuild: true
+    peerDependencies:
+      '@adiwajshing/keyed-db': ^0.2.4
+      jimp: ^0.16.1
+      link-preview-js: ^2.1.13
+      qrcode-terminal: ^0.12.0
+      sharp: ^0.30.5
+    peerDependenciesMeta:
+      '@adiwajshing/keyed-db':
+        optional: true
+      jimp:
+        optional: true
+      link-preview-js:
+        optional: true
+      qrcode-terminal:
+        optional: true
+      sharp:
+        optional: true
+    dependencies:
+      '@hapi/boom': 9.1.4
+      axios: 0.24.0
+      futoin-hkdf: 1.5.1
+      libsignal: github.com/adiwajshing/libsignal-node/11dbd962ea108187c79a7c46fe4d6f790e23da97
+      music-metadata: 8.1.0
+      node-cache: 5.1.2
+      pino: 7.11.0
+      protobufjs: 6.11.3
+      sharp: 0.31.1
+      ws: 8.9.0
+    transitivePeerDependencies:
+      - bufferutil
+      - debug
+      - supports-color
+      - utf-8-validate
     dev: false
