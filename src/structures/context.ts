@@ -513,6 +513,24 @@ export class Context {
   }
 
   /**
+   * Create whatsapp poll/vote
+   * @param {string} name Poll name
+   * @param {string[]} values Poll values (options)
+   * @return {Promise<Context | undefined>}
+   */
+  public async createPoll(
+    name: string,
+    values: string[],
+  ): Promise<Context | undefined> {
+    return this.sendRaw({
+      poll: {
+        name,
+        values,
+      },
+    });
+  }
+
+  /**
    * Get collector instance.
    * @param {CollectorOptions} options - Message Collector options.
    * @return {MessageCollector}
