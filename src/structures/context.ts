@@ -1,6 +1,7 @@
 import {
   AnyMessageContent,
   GroupParticipant,
+  MiscMessageGenerationOptions,
   proto,
 } from '@adiwajshing/baileys';
 import Long from 'long';
@@ -309,64 +310,46 @@ export class Context {
    * Reply the message
    *
    * @param {string} text - Text Content
-   * @param {AnyMessageContent} anotherOptions - Send message options
+   * @param {AnyMessageContent} options - Send message options
    */
-  public async reply(text: string, anotherOptions?: AnyMessageContent) {
-    try {
-      return new Context(
-        this.client,
-        (await this.client.raw?.sendMessage(
-          this.rawMessage.key.remoteJid as string,
-          {
-            'text': text,
-            ...anotherOptions,
-          },
-          {
-            quoted: this.rawMessage,
-          },
-        )) as proto.IWebMessageInfo,
-      );
-    } catch (e) {
-      this.client.logger.error('Error to send a message: ' + text, e);
-      return undefined;
-    }
+  public async reply(text: string, options?: AnyMessageContent) {
+    return this.sendRaw(
+      {
+        text,
+        ...options,
+      },
+      {
+        quoted: this.raw,
+      },
+    );
   }
 
   /**
    * Reply a message with audio
    * @param {Buffer | string} audio - URL/Buffer audio
    * @param {boolean} isVN - Is it voice note?
-   * @param {AnyMessageContent} anotherOptions - Send message options
+   * @param {AnyMessageContent} options - Send message options
    */
   public async replyWithAudio(
     audio: Buffer | string,
     isVN = false,
-    anotherOptions?: AnyMessageContent,
+    options?: AnyMessageContent,
   ) {
-    try {
-      return new Context(
-        this.client,
-        (await this.client.raw?.sendMessage(
-          this.rawMessage.key.remoteJid as string,
-          {
-            'audio':
-              typeof audio === 'string'
-                ? {
-                    'url': audio,
-                  }
-                : audio,
-            'ptt': isVN,
-            ...anotherOptions,
-          },
-          {
-            'quoted': this.rawMessage,
-          },
-        )) as proto.IWebMessageInfo,
-      );
-    } catch (e) {
-      this.client.logger.error('Error want to send a message: AUDIO', e);
-      return undefined;
-    }
+    return this.sendRaw(
+      {
+        audio:
+          typeof audio === 'string'
+            ? {
+                url: audio,
+              }
+            : audio,
+        ptt: isVN,
+        ...options,
+      },
+      {
+        quoted: this.raw,
+      },
+    );
   }
 
   /**
@@ -374,64 +357,73 @@ export class Context {
    *
    * @param {Buffer | string} video - Video source want to send.
    * @param {string?} caption - Video caption
-   * @param {AnyMessageContent} anotherOptions - Send message options
+   * @param {AnyMessageContent} options - Send message options
    */
   public async replyWithVideo(
     video: Buffer | string,
     caption?: string,
-    anotherOptions?: AnyMessageContent,
+    options?: AnyMessageContent,
   ) {
-    if (!anotherOptions) {
-      (anotherOptions as unknown) = {};
+    if (!options) {
+      (options as unknown) = {};
     }
+
     if (caption) {
-      (anotherOptions as Record<string, unknown>)['caption'] = caption;
+      (options as Record<string, unknown>)['caption'] = caption;
     }
-    try {
-      return new Context(
-        this.client,
-        (await this.client.raw?.sendMessage(
-          this.rawMessage.key.remoteJid as string,
-          {
-            'video':
-              typeof video === 'string'
-                ? {
-                    'url': video,
-                  }
-                : video,
-            ...anotherOptions,
-          },
-          {
-            'quoted': this.rawMessage,
-          },
-        )) as proto.IWebMessageInfo,
-      );
-    } catch (e) {
-      this.client.logger.error('Error want to send a message: VIDEO', e);
-      return undefined;
-    }
+
+    return this.sendRaw(
+      {
+        video:
+          typeof video === 'string'
+            ? {
+                url: video,
+              }
+            : video,
+        ...options,
+      },
+      {
+        quoted: this.raw,
+      },
+    );
   }
 
   /**
    * Only send a message without reply.
    *
    * @param {string} text - Send a text
-   * @param {AnyMessageContent} anotherOptions - Send message options
+   * @param {AnyMessageContent} options - Send message options
    */
-  public async send(text: string, anotherOptions?: AnyMessageContent) {
+  public async send(text: string, options?: AnyMessageContent) {
+    return this.sendRaw({
+      text,
+      ...options,
+    });
+  }
+
+  /**
+   * Send raw message
+   * @param {AnyMessageContent} raw AnyMessageContent message options
+   * @param {MiscMessageGenerationOptions} miscOpt Misc message generation options
+   * @return {Promise<Context | undefined>}
+   */
+  public async sendRaw(
+    raw: AnyMessageContent,
+    miscOpt?: MiscMessageGenerationOptions,
+  ): Promise<Context | undefined> {
     try {
       return new Context(
         this.client,
         (await this.client.raw?.sendMessage(
-          this.rawMessage.key.remoteJid as string,
-          {
-            'text': text,
-            ...anotherOptions,
-          },
+          this.raw.key.remoteJid as string,
+          raw,
+          miscOpt,
         )) as proto.IWebMessageInfo,
       );
-    } catch (e) {
-      this.client.logger.error('Error want to send a message: NORMAL TEXT', e);
+    } catch (e: unknown) {
+      this.client.logger.error(
+        `Couldn't send message because: ${(e as Error).message}`,
+      );
       return undefined;
     }
   }
@@ -441,83 +433,77 @@ export class Context {
    *
    * @param {Buffer | string} photo - A Photo
    * @param {string?} caption - A Photo caption
-   * @param {AnyMessageContent?} anotherOptions - Send message options
+   * @param {AnyMessageContent?} options - Send message options
    */
   public async replyWithPhoto(
     photo: Buffer | string,
     caption?: string,
-    anotherOptions?: AnyMessageContent,
+    options?: AnyMessageContent,
   ) {
-    if (!anotherOptions) (anotherOptions as unknown) = {};
+    if (!options) (options as unknown) = {};
     if (caption) {
-      (anotherOptions as Record<string, unknown>)['caption'] = caption;
+      (options as Record<string, unknown>)['caption'] = caption;
     }
-    try {
-      return new Context(
-        this.client,
-        (await this.client.raw?.sendMessage(
-          this.rawMessage.key.remoteJid as string,
-          {
-            'image': typeof photo === 'string' ? { 'url': photo } : photo,
-            'mimetype': 'image/png',
-            ...anotherOptions,
-          },
-          {
-            'quoted': this.rawMessage,
-          },
-        )) as proto.IWebMessageInfo,
-      );
-    } catch (e) {
-      this.client.logger.error('Error want to send a message: PHOTO', e);
-      return undefined;
-    }
+
+    return this.sendRaw(
+      {
+        image:
+          typeof photo === 'string'
+            ? {
+                url: photo,
+              }
+            : photo,
+        ...options,
+      },
+      {
+        quoted: this.raw,
+      },
+    );
   }
 
   /**
    * Reply a message using sticker
    *
-   * @param {Buffer | string} sticker
+   * @param {Buffer | string} sticker Sticker URL or Buffer
+   * @param {AnyMessageContent?} options Reply message options
    */
-  public async replyWithSticker(sticker: Buffer | string) {
-    try {
-      return new Context(
-        this.client,
-        (await this.client.raw?.sendMessage(
-          this.rawMessage.key.remoteJid as string,
-          {
-            'sticker':
-              typeof sticker === 'string'
-                ? {
-                    'url': sticker,
-                  }
-                : sticker,
-          },
-          {
-            'quoted': this.rawMessage,
-          },
-        )) as proto.IWebMessageInfo,
-      );
-    } catch (e) {
-      this.client.logger.error('Error want to send a message: STICKER', e);
-      return undefined;
-    }
+  public async replyWithSticker(
+    sticker: Buffer | string,
+    options?: AnyMessageContent,
+  ) {
+    return this.sendRaw(
+      {
+        sticker:
+          typeof sticker === 'string'
+            ? {
+                url: sticker,
+              }
+            : sticker,
+        ...options,
+      },
+      {
+        quoted: this.raw,
+      },
+    );
   }
 
   /**
    * Delete this message
+   * @return {Promise<Context | undefined>}
    */
-  public async delete() {
-    try {
-      return await this.client.raw?.sendMessage(
-        this.rawMessage.key.remoteJid as string,
-        {
-          'delete': this.rawMessage.key,
-        },
-      );
-    } catch (e) {
-      this.client.logger.error('Error want to delete a message: ', e);
-      return undefined;
+  public async delete(): Promise<Context | undefined> {
+    if (this.isGroup && !this.isFromMe) {
+      const group = this.getGroup();
+      if (group && group.members.findIndex(mem => mem.jid === this.raw.key.id && (mem.isAdmin || mem.isSuperAdmin)) === -1) {
+        return undefined;
+      } else {
+        await this.syncGroup();
+        return this.delete();
+      }
     }
+    return this.sendRaw({
+      delete: this.raw.key,
+    });
   }
 
   /**
