@@ -1,5 +1,6 @@
 import {
   AnyMessageContent,
+  getPollUpdateMessage,
   GroupParticipant,
   MiscMessageGenerationOptions,
   proto,
@@ -36,6 +37,18 @@ export class Context {
    */
   public get id(): string {
     return this.rawMessage.key.id as string;
+  }
+
+  /**
+   * Get Poll Enc Key
+   * @return {Uint8Array | undefined}
+   */
+  public get pollEncKey(): Uint8Array | undefined {
+    return (
+      this.rawMessage.message?.pollCreationMessage?.encKey ||
+      this.rawMessage.message?.messageContextInfo?.messageSecret ||
+      undefined
+    );
   }
 
   /**
@@ -538,6 +551,13 @@ export class Context {
   public getCollector(options?: CollectorOptions): MessageCollector {
     return new MessageCollector(this, options);
   }
+
+  /**
+   * Get poll updates
+   * @description Alias 'getPollUpdateMessage' on '@adiwajshing/baileys'
+   */
+  public getPollUpdates = getPollUpdateMessage;
+
   /**
    * Get raw message.
    */
