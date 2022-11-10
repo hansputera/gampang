@@ -45,8 +45,8 @@ export class Context {
    */
   public get pollEncKey(): Uint8Array | undefined {
     return (
-      this.rawMessage.message?.pollCreationMessage?.encKey ||
       this.rawMessage.message?.messageContextInfo?.messageSecret ||
+      this.rawMessage.message?.pollCreationMessage?.encKey ||
       undefined
     );
   }
