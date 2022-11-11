@@ -18,7 +18,7 @@ import { GroupContext, MessageCollector } from '../structures';
 import { qrHandler, SessionManager } from '../utils';
 import { MiddlewareManager } from './middleware';
 
-import { botCommand, messageCollector } from '../middlewares';
+import { botCommand, messageCollector, pollMiddleware } from '../middlewares';
 import { messageUpsertEvent } from '../events';
 
 export declare interface Client {
@@ -60,6 +60,7 @@ export class Client extends EventEmitter {
     if (!(session instanceof SessionManager))
       throw new TypeError("'session' must be SessionManager!");
 
+    this.middleware.use(pollMiddleware);
     this.middleware.use(messageCollector);
     this.middleware.use(botCommand);
 
