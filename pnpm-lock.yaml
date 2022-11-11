@@ -25,7 +25,7 @@ specifiers:
   typescript: 4.8.4
 
 dependencies:
-  '@adiwajshing/baileys': github.com/hansputera/Baileys/0ac014e4b339a67724a9e5097b66f2ec9b427b62_4z2e75y5ly72qeobrsvg3mhsv4
+  '@adiwajshing/baileys': github.com/hansputera/Baileys/4d622406832ccee7df8ff25542e31fb6ae3d560a_4z2e75y5ly72qeobrsvg3mhsv4
   '@peculiar/webcrypto': 1.4.1
   long: 5.2.1
   pino: 8.7.0
@@ -2587,9 +2587,9 @@ packages:
       protobufjs: 6.8.8
     dev: false
 
-  github.com/hansputera/Baileys/0ac014e4b339a67724a9e5097b66f2ec9b427b62_4z2e75y5ly72qeobrsvg3mhsv4:
-    resolution: {tarball: https://codeload.github.com/hansputera/Baileys/tar.gz/0ac014e4b339a67724a9e5097b66f2ec9b427b62}
-    id: github.com/hansputera/Baileys/0ac014e4b339a67724a9e5097b66f2ec9b427b62
+  github.com/hansputera/Baileys/4d622406832ccee7df8ff25542e31fb6ae3d560a_4z2e75y5ly72qeobrsvg3mhsv4:
+    resolution: {tarball: https://codeload.github.com/hansputera/Baileys/tar.gz/4d622406832ccee7df8ff25542e31fb6ae3d560a}
+    id: github.com/hansputera/Baileys/4d622406832ccee7df8ff25542e31fb6ae3d560a
     name: '@adiwajshing/baileys'
     version: 5.0.0
     prepare: true
