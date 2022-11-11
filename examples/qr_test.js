@@ -19,6 +19,10 @@ const client = new Client(session, {
   'prefixes': ['.'],
 });
 
+client.on('ready', () => {
+  console.log(client.raw?.user, 'ready');
+});
+
 client.command(
   'col',
   async (ctx) => {
@@ -58,5 +62,18 @@ client.command(
     'cooldown': 1_000,
   },
 );
+
+client.command(
+  'poll',
+  async (ctx) => {
+    await ctx.createPoll('Test', ['Apple', 'Orange']);
+  },
+  {
+    aliases: ['testpoll'],
+  },
+);
+
+client.on('poll', console.log);
+client.on('vote', console.log);
 
 client.launch();
