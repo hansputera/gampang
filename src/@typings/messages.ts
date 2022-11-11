@@ -12,3 +12,11 @@ export interface PollCreateEventData {
   sender: string;
   pollId: string;
 }
+
+export interface PollVoteEventData {
+  pollId: string;
+  voter: string;
+  sender?: string;
+  payload: Uint8Array;
+  payload_iv: Uint8Array;
+}

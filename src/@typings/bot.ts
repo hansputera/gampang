@@ -1,7 +1,7 @@
 import makeWASocket, { AuthenticationState } from '@adiwajshing/baileys';
 import type { Client } from '../bot';
 import type { Context, MessageCollector } from '../structures';
-import type { PollCreateEventData } from './messages';
+import type { PollCreateEventData, PollVoteEventData } from './messages';
 import type { IStore } from './stores';
 
 export type MakeWaSocketType = ReturnType<typeof makeWASocket>;
@@ -37,6 +37,7 @@ export interface ClientEvents {
     collector: MessageCollector,
   ) => Promise<void> | void;
   'poll': (poll: PollCreateEventData) => Promise<void> | void;
+  'vote': (vote: PollVoteEventData) => Promise<void> | void;
 }
 
 /**
