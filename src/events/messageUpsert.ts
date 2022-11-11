@@ -1,3 +1,4 @@
+import { jidNormalizedUser } from '@adiwajshing/baileys';
 import { CustomEventFunc } from '../@typings';
 import { Context } from '../structures/context';
 
@@ -14,7 +15,9 @@ export const messageUpsertEvent: CustomEventFunc<'messages.upsert'> = async (
           (o) => o.optionName as string,
         ) || [],
       pollId: context.raw.key.id || '',
-      sender: context.raw.participant || context.raw.key.remoteJid || '',
+      sender: jidNormalizedUser(
+        context.raw.participant || context.raw.key.remoteJid || '',
+      ),
     });
   }
 
