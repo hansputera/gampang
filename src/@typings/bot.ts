@@ -36,8 +36,8 @@ export interface ClientEvents {
     state: CollectorEventState,
     collector: MessageCollector,
   ) => Promise<void> | void;
-  'poll': (poll: PollCreateEventData) => Promise<void> | void;
-  'vote': (vote: PollVoteEventData) => Promise<void> | void;
+  'poll': (poll: PollCreateEventData, ctx: Context) => Promise<void> | void;
+  'vote': (vote: PollVoteEventData, ctx: Context) => Promise<void> | void;
 }
 
 /**
