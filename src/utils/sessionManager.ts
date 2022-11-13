@@ -32,7 +32,7 @@ export class SessionManager {
     if (typeof path !== 'string') throw new TypeError('Invalid path');
     else if (
       typeof type !== 'string' ||
-      ['folder', 'file'].indexOf(type.toLowerCase()) === -1
+      ['folder', 'file', 'adapter'].indexOf(type.toLowerCase()) === -1
     )
       throw new TypeError('Invalid session type');
 
