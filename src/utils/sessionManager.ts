@@ -93,13 +93,15 @@ export class SessionManager {
   /**
    * Register your favourite adapter.
    * @param {AdapterFn} adapterFn The adapter function.
+   * @param {T} args Adapter's args.
    * @return {SessionManager}
    */
-  registerAdapter(adapterFn: AdapterFn): SessionManager {
+  registerAdapter<T>(adapterFn: AdapterFn<T>, args: T): SessionManager {
     if (typeof adapterFn !== 'function')
       throw new TypeError('`adapterFn` must be function!');
 
-    this.save = () => adapterFn.bind(this)(this.client, this.path, this.#auth);
+    this.save = () =>
+      adapterFn.bind(this)(this.client, this.path, this.#auth, args);
     return this;
   }
 
