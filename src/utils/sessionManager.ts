@@ -4,7 +4,7 @@ import {
 } from '@adiwajshing/baileys';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
-import type { AdapterFn } from '../@typings';
+import type { Adapter } from '../@typings';
 import type { Client } from '../bot';
 import { readSingleAuthFile } from '../session';
 
@@ -92,16 +92,24 @@ export class SessionManager {
 
   /**
    * Register your favourite adapter.
-   * @param {AdapterFn} adapterFn The adapter function.
+   * @param {Adapter} adapter The adapter.
    * @param {T} args Adapter's args.
    * @return {SessionManager}
    */
-  registerAdapter<T>(adapterFn: AdapterFn<T>, args: T): SessionManager {
-    if (typeof adapterFn !== 'function')
-      throw new TypeError('`adapterFn` must be function!');
+  async registerAdapter<T>(
+    adapter: Adapter<T>,
+    args: T,
+  ): Promise<SessionManager> {
+    if (typeof adapter !== 'function')
+      throw new TypeError('`adapter` must be function!');
+    else if (typeof args === 'undefined') {
+      throw new TypeError('`args` is required!');
+    }
 
-    this.save = () =>
-      adapterFn.bind(this)(this.client, this.path, this.#auth, args);
+    const adapterObject = await adapter(this.client, this.path, args);
+    this.#auth = adapterObject.state;
+    this.save = adapterObject.save;
+
     return this;
   }
 

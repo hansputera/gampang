@@ -53,16 +53,16 @@ export type AuthState = {
 };
 
 /**
- * Authentication adapter function
  * @param {Client} client Gampang Client
  * @param {string} path Authentication session path (if required by adapter)
- * @param {state} AuthenticationState WhatsApp Authentication State
- * @param {T} args Adapter args
- * @return {Promise<void>}
+ * @param {T} args Adapter's args
+ * @return {Promise<{ state: AuthenticationState, save: () => Promise<void> }>}
  */
-export type AdapterFn<T> = (
+export type Adapter<T> = (
   client: Client,
   path: string,
-  state: AuthenticationState,
   args: T,
-) => Promise<void>;
+) => Promise<{
+  state: AuthState['state'];
+  save: AuthState['saveCreds'];
+}>;
