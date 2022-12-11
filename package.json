@@ -53,5 +53,8 @@
   },
   "repository": {
     "url": "https://github.com/hansputera/gampang.git"
+  },
+  "engines": {
+    "node": ">=12.x"
   }
 }
