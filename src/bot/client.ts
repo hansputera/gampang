@@ -64,6 +64,8 @@ export class Client extends EventEmitter {
     this.middleware.use(messageCollector);
     this.middleware.use(botCommand);
 
+    this.addCustomEvent('messages.upsert', messageUpsertEvent);
+
     this.session.client = this;
   }
 
@@ -76,6 +78,8 @@ export class Client extends EventEmitter {
   public middleware: MiddlewareManager = new MiddlewareManager();
 
   qrServer?: Server;
+  #rawEvents: Map<BaileysEventList, CustomEventFunc<BaileysEventList>> =
+    new Map();
 
   /**
    * Add your custom event handler.
@@ -88,7 +92,7 @@ export class Client extends EventEmitter {
     func: CustomEventFunc<T>,
   ): Client {
     this.logger.info(textFormat('CustomEvent [%s] added', event));
-    this.raw?.ev?.on(event, (arg) => func(this, arg));
+    this.#rawEvents.set(event, func as CustomEventFunc<BaileysEventList>);
     return this;
   }
   /**
@@ -219,7 +223,9 @@ export class Client extends EventEmitter {
     });
 
     if (this.raw) {
-      this.addCustomEvent('messages.upsert', messageUpsertEvent);
+      this.#rawEvents.forEach((func, key) => {
+        this.raw?.ev.on(key, (arg) => func(this, arg));
+      });
     }
   }
 }
