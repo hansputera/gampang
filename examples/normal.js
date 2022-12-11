@@ -76,4 +76,8 @@ client.command(
 client.on('poll', console.log);
 client.on('vote', console.log);
 
+client.addCustomEvent('messages.upsert', (_, { messages }) => {
+  console.log(JSON.stringify(messages));
+});
+
 client.launch();

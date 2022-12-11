@@ -79,7 +79,10 @@ export class Client extends EventEmitter {
   public middleware: MiddlewareManager = new MiddlewareManager();
 
   qrServer?: Server;
-  #rawEvents: Set<{ event: BaileysEventList; func: CustomEventFunc<BaileysEventList> }> = new Set();
+  #rawEvents: Set<{
+    event: BaileysEventList;
+    func: CustomEventFunc<BaileysEventList>;
+  }> = new Set();
 
   /**
    * Add your custom event handler.
@@ -92,7 +95,10 @@ export class Client extends EventEmitter {
     func: CustomEventFunc<T>,
   ): Client {
     this.logger.info(textFormat('CustomEvent [%s] added', event));
-    this.#rawEvents.add({ event, func: func as CustomEventFunc<BaileysEventList> });
+    this.#rawEvents.add({
+      event,
+      func: func as CustomEventFunc<BaileysEventList>,
+    });
     return this;
   }
   /**
@@ -227,7 +233,9 @@ export class Client extends EventEmitter {
         textFormat('Found %d registered raw events', this.#rawEvents.size),
       );
       this.#rawEvents.forEach((value) => {
-        this.logger.info(textFormat('Registering %s to current client', value.event));
+        this.logger.info(
+          textFormat('Registering %s to current client', value.event),
+        );
         this.raw?.ev.on(value.event, (arg) => value.func(this, arg));
       });
     }
