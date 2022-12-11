@@ -1,4 +1,5 @@
 import makeWASocket, { AuthenticationState } from '@adiwajshing/baileys';
+import type pino from 'pino';
 import type { Client } from '../bot';
 import type { Context, MessageCollector } from '../structures';
 import type { PollCreateEventData, PollVoteEventData } from './messages';
@@ -23,6 +24,7 @@ export interface ClientOptions {
   middlewares?: {
     cooldown?: MiddlewareFunc;
   };
+  logger?: pino.LoggerOptions;
 }
 
 export type CollectorEventState = 'create' | 'end';

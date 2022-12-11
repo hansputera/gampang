@@ -56,6 +56,7 @@ export class Client extends EventEmitter {
     if (options.dataStore) this.dataStores = options.dataStore;
     // TODO: change it.
     else this.dataStores = new Map() as unknown as ClientOptions['dataStore'];
+    this.logger = createLogger('Gampang', options.logger);
 
     if (!(session instanceof SessionManager))
       throw new TypeError("'session' must be SessionManager!");
@@ -70,7 +71,7 @@ export class Client extends EventEmitter {
   }
 
   public commands: Map<string, Command> = new Map();
-  public logger: PinoLogger = createLogger('Gampang');
+  public logger!: PinoLogger;
   public raw?: RawClient;
   public collectors: Map<string, MessageCollector> = new Map();
   public groups: Map<string, GroupContext> = new Map();
@@ -223,7 +224,11 @@ export class Client extends EventEmitter {
     });
 
     if (this.raw) {
+      this.logger.info(
+        textFormat('Found %d registered raw events', this.#rawEvents.size),
+      );
       this.#rawEvents.forEach((func, key) => {
+        this.logger.info(textFormat('Registering %s to current client', key));
         this.raw?.ev.on(key, (arg) => func(this, arg));
       });
     }
