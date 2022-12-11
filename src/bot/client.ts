@@ -65,9 +65,9 @@ export class Client extends EventEmitter {
     this.middleware.use(messageCollector);
     this.middleware.use(botCommand);
 
-    this.addCustomEvent('messages.upsert', messageUpsertEvent);
-
     this.session.client = this;
+
+    this.addCustomEvent('messages.upsert', messageUpsertEvent);
   }
 
   public commands: Map<string, Command> = new Map();
@@ -79,8 +79,7 @@ export class Client extends EventEmitter {
   public middleware: MiddlewareManager = new MiddlewareManager();
 
   qrServer?: Server;
-  #rawEvents: Map<BaileysEventList, CustomEventFunc<BaileysEventList>> =
-    new Map();
+  #rawEvents: Set<{ event: BaileysEventList; func: CustomEventFunc<BaileysEventList> }> = new Set();
 
   /**
    * Add your custom event handler.
@@ -93,7 +92,7 @@ export class Client extends EventEmitter {
     func: CustomEventFunc<T>,
   ): Client {
     this.logger.info(textFormat('CustomEvent [%s] added', event));
-    this.#rawEvents.set(event, func as CustomEventFunc<BaileysEventList>);
+    this.#rawEvents.add({ event, func: func as CustomEventFunc<BaileysEventList> });
     return this;
   }
   /**
@@ -227,9 +226,9 @@ export class Client extends EventEmitter {
       this.logger.info(
         textFormat('Found %d registered raw events', this.#rawEvents.size),
       );
-      this.#rawEvents.forEach((func, key) => {
-        this.logger.info(textFormat('Registering %s to current client', key));
-        this.raw?.ev.on(key, (arg) => func(this, arg));
+      this.#rawEvents.forEach((value) => {
+        this.logger.info(textFormat('Registering %s to current client', value.event));
+        this.raw?.ev.on(value.event, (arg) => value.func(this, arg));
       });
     }
   }
