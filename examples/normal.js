@@ -11,9 +11,9 @@ const session = new SessionManager(
 // );
 const client = new Client(session, {
   'qr': {
-    'store': 'web',
+    'store': 'file',
     'options': {
-      'port': 3000,
+      'dest': path.resolve(__dirname, 'scan.jpg'),
     },
   },
   'prefixes': ['.'],
