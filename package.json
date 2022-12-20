@@ -8,7 +8,7 @@
     "format": "prettier . --write",
     "lint": "eslint \"src/**/*.{ts,js,d.ts}\" --fix",
     "build": "tsup",
-    "test": "npm run build && nodemon ./examples/qr_test.js",
+    "test": "npm run build && nodemon ./examples/normal.js",
     "clean": "rimraf dist",
     "prepare": "husky install",
     "docs": "rimraf docs && typedoc --options typedoc.json"
