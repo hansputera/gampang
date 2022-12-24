@@ -174,6 +174,16 @@ export class Client extends EventEmitter {
       options as Omit<UserFacingSocketConfig, 'auth'>,
     );
 
+    this.logger.info(
+      textFormat('Found %d registered raw events', this.#rawEvents.size),
+    );
+    this.#rawEvents.forEach((value) => {
+      this.logger.info(
+        textFormat('Registering %s to current client', value.event),
+      );
+      this.raw?.ev.on(value.event, (arg) => value.func(this, arg));
+    });
+
     this.raw.ev.on('connection.update', async (conn) => {
       if (conn.connection === 'open' && this.raw && this.raw.user?.id) {
         this.emit('ready');
@@ -227,18 +237,6 @@ export class Client extends EventEmitter {
 
       await this.session.save();
     });
-
-    if (this.raw) {
-      this.logger.info(
-        textFormat('Found %d registered raw events', this.#rawEvents.size),
-      );
-      this.#rawEvents.forEach((value) => {
-        this.logger.info(
-          textFormat('Registering %s to current client', value.event),
-        );
-        this.raw?.ev.on(value.event, (arg) => value.func(this, arg));
-      });
-    }
   }
 }
 

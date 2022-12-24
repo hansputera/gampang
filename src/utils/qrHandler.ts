@@ -1,7 +1,8 @@
-import { ClientOptions } from '../@typings';
+import type { ClientOptions } from '../@typings';
 import qrcode from 'qrcode';
 import http from 'node:http';
-import { Client } from '../bot';
+import type { Client } from '../bot';
+import { unlink } from 'node:fs/promises';
 
 export const qrHandler = async (
   client: Client,
@@ -13,6 +14,10 @@ export const qrHandler = async (
       throw new TypeError('Please fill QR Path destination!');
     qrcode.toFile(qrOptions?.options.dest, qr, (err) => {
       if (err) console.error('Something was wrong:', err);
+
+      client.on('ready', () =>
+        unlink(qrOptions?.options?.dest as string).catch(console.error),
+      );
     });
   } else if (qrOptions?.store === 'web') {
     if (client.qrServer) {
@@ -38,11 +43,12 @@ export const qrHandler = async (
       }
     });
 
-    client.qrServer?.listen(port, '0.0.0.0');
+    client.qrServer?.listen(port, '127.0.0.1');
   } else if (qrOptions?.store === 'terminal') {
     console.log(
       await qrcode.toString(qr, {
         'type': 'terminal',
+        'small': true,
       }),
     );
   }
