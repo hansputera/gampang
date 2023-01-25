@@ -16,9 +16,12 @@ export const qrHandler = async (
     qrcode.toFile(qrOptions?.options.dest, qr, (err) => {
       if (err) console.error('Something was wrong:', err);
       else {
-        client.on('ready', () => {
-          fs.unlinkSync(path.resolve(qrOptions.options!.dest as string));
-        });
+        const pathFile = qrOptions.options!.dest as string;
+        if (fs.existsSync(path.resolve(pathFile))) {
+          client.on('ready', () => {
+            fs.unlinkSync(path.resolve(pathFile));
+          });
+        }
       }
     });
   } else if (qrOptions?.store === 'web') {
