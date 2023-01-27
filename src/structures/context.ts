@@ -108,6 +108,45 @@ export class Context {
     } else return undefined;
   }
 
+  /**
+   * Get detail from clicked basic button
+   *
+   * @return {proto.Message.IButtonsResponseMessage | undefined}
+   */
+  public get replyFromBasicButton():
+    | proto.Message.IButtonsResponseMessage
+    | undefined {
+    if (this.raw.message?.buttonsResponseMessage) {
+      return this.raw.message.buttonsResponseMessage;
+    } else return undefined;
+  }
+
+  /**
+   * Get detail from clicked template button
+   *
+   * @return {proto.Message.ITemplateButtonReplyMessage | undefined}
+   */
+  public get replyFromTemplateButton():
+    | proto.Message.ITemplateButtonReplyMessage
+    | undefined {
+    if (this.raw.message?.templateButtonReplyMessage) {
+      return this.raw.message.templateButtonReplyMessage;
+    } else return undefined;
+  }
+
+  /**
+   * Get detail from clicked list button
+   *
+   * @return {proto.Message.IListResponseMessage | undefined}
+   */
+  public get replyFromListButton():
+    | proto.Message.IListResponseMessage
+    | undefined {
+    if (this.raw.message?.listResponseMessage) {
+      return this.raw.message.listResponseMessage;
+    } else return undefined;
+  }
+
   public flags: string[] = [];
   public args: string[] = [];
 
@@ -116,14 +155,24 @@ export class Context {
    * @return {Command}
    */
   public getCommand(): Command | undefined {
-    if (!this.isCommand()) return undefined;
+    if (!this.isCommand() && !this.isResponseFromButton()) return undefined;
 
-    return (
-      this.client.commands.get(this.getCommandName()) ||
-      [...this.client.commands.values()].find((c) =>
-        c.options?.aliases?.includes(this.getCommandName()),
-      )
-    );
+    if (
+      this.isResponseFromButton() &&
+      !this.client.commands.get(this.getIdButton() as string)
+    ) {
+      this.client.logger.warn(
+        'The id of button is not equal for the command name',
+      );
+      return undefined;
+    }
+
+    return this.isResponseFromButton()
+      ? this.client.commands.get(this.getIdButton() as string)
+      : this.client.commands.get(this.getCommandName()) ||
+          [...this.client.commands.values()].find((c) =>
+            c.options?.aliases?.includes(this.getCommandName()),
+          );
   }
 
   /**
@@ -208,6 +257,21 @@ export class Context {
   }
 
   /**
+   * Knows the message is button.
+   *
+   * @return {boolean}
+   */
+  public isResponseFromButton(): boolean {
+    if (
+      this.replyFromBasicButton ||
+      this.replyFromListButton ||
+      this.replyFromTemplateButton
+    )
+      return true;
+    else return false;
+  }
+
+  /**
    * Get the prefix from the message
    *
    * @return {string}
@@ -228,6 +292,19 @@ export class Context {
    */
   public getCommandName(): string {
     return this.getArgs(true)[0];
+  }
+
+  /**
+   * Get the id button from message
+   *
+   * @return {string}
+   */
+  public getIdButton(): string | undefined | null {
+    return (
+      this.replyFromBasicButton?.selectedButtonId ||
+      this.replyFromListButton?.singleSelectReply?.selectedRowId ||
+      this.replyFromTemplateButton?.selectedId
+    );
   }
 
   /**
@@ -498,6 +575,37 @@ export class Context {
         quoted: this.raw,
       },
     );
+  }
+
+  // /**
+  //  * Reply a message using button template
+  //  *
+  //  * @param {"basic" | "list" | "template"} type Type of button
+  //  * @param {AnyMessageContent?} options Reply message options
+  //  */
+  // public async replyWithButton<T extends ButtonType = 'basic'>(
+  // type: T,
+  // options: ButtonOptions<T>,
+  //   ) {
+  //     switch (type) {
+  //       case 'basic':
+  //         return this.sendRaw(options, { quoted: this.raw });
+  //       case 'list':
+  //         return this.sendRaw(options, { quoted: this.raw });
+  //       case 'template':
+  //         return this.sendRaw(options, { quoted: this.raw });
+  //       default:
+  //         return this.sendRaw({ viewOnce: true, ...options }, { quoted: this.raw });
+  //     }
+  //   }
+
+  /**
+   * Reply a message using button template
+   *
+   * @param {AnyMessageContent} options Reply message options
+   */
+  public async replyWithButton(options: AnyMessageContent) {
+    return this.sendRaw(options, { quoted: this.raw });
   }
 
   /**
