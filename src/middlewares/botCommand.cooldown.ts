@@ -5,6 +5,10 @@ export const botCommandCooldown = async (
   context: Context,
   cmd: Command,
 ): Promise<void> => {
+  if (context.client.getOptions()?.disableCooldown) {
+    return;
+  }
+
   const cooldownKey = 'cooldown_'.concat(
     context.getCurrentJid(),
     '-',

@@ -25,6 +25,7 @@ export interface ClientOptions {
     cooldown?: MiddlewareFunc;
   };
   logger?: pino.LoggerOptions;
+  disableCooldown?: boolean;
 }
 
 export type CollectorEventState = 'create' | 'end';
