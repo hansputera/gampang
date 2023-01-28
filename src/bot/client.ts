@@ -66,7 +66,6 @@ export class Client extends EventEmitter {
     this.middleware.use(botCommand);
 
     this.session.client = this;
-
     this.addCustomEvent('messages.upsert', messageUpsertEvent);
   }
 
@@ -157,6 +156,10 @@ export class Client extends EventEmitter {
    * @return {Promise<void>}
    */
   async launch(options?: Omit<UserFacingSocketConfig, 'auth'>): Promise<void> {
+    if (this.qrServer) {
+      this.qrServer.close();
+      this.qrServer = undefined;
+    }
     this.logger.info('Launching Gampang Client');
     if (typeof options !== 'object')
       options = {
@@ -184,8 +187,17 @@ export class Client extends EventEmitter {
       this.raw?.ev.on(value.event, (arg) => value.func(this, arg));
     });
 
+    this.raw.ev.on('messages.upsert', console.log);
+
+    if (!this.raw.user?.id)
+      qrHandler(this, this.options?.qr as ClientOptions['qr']);
+
     this.raw.ev.on('connection.update', async (conn) => {
       if (conn.connection === 'open' && this.raw && this.raw.user?.id) {
+        if (this.qrServer) {
+          this.qrServer.close();
+          this.qrServer = undefined;
+        }
         this.emit('ready');
       }
 
@@ -195,8 +207,6 @@ export class Client extends EventEmitter {
       }
 
       if (conn.qr) {
-        if (typeof this.options?.qr === 'object')
-          qrHandler(this, conn.qr, this.options?.qr as ClientOptions['qr']);
         this.emit('qr', conn.qr);
       } else if (conn.lastDisconnect && conn.lastDisconnect.error) {
         switch (

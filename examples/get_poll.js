@@ -44,8 +44,15 @@ client.on('vote', async (vote, ctx) => {
   }
 });
 
+client.command('is-work', async (ctx) => {
+  console.log(await ctx.reply('It works!'));
+});
+
 client.command('test-poll', async (ctx) => {
-  await ctx.createPoll('Poll Test', ['Apple', 'Orange']);
+  console.log(
+    'Poll Result: ',
+    await ctx.createPoll('Poll Test', ['Apple', 'Orange']),
+  );
 });
 
 client.launch();

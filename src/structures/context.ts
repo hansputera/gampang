@@ -1,13 +1,22 @@
 import {
   AnyMessageContent,
-  getPollUpdateMessage,
+  generateWAMessage,
+  getUrlInfo,
   GroupParticipant,
+  jidNormalizedUser,
   MiscMessageGenerationOptions,
   proto,
+  WAMediaUploadFunction,
 } from '@adiwajshing/baileys';
 import Long from 'long';
-import { CollectorOptions, Command, ClientOptions } from '../@typings';
-import { Client } from '../bot';
+import {
+  type CollectorOptions,
+  Command,
+  ClientOptions,
+  PollUpdateMessageResult,
+} from '../@typings';
+import { type Client } from '../bot';
+import { comparePollMessage, decryptPollMessageRaw, getCrypto } from '../utils';
 import { MessageCollector } from './collector';
 import { Image, Sticker, Video } from './entities';
 import { GroupContext } from './group';
@@ -529,18 +538,66 @@ export class Context {
    * Create whatsapp poll/vote
    * @param {string} name Poll name
    * @param {string[]} values Poll values (options)
+   * @param {number} selectableOptionsCount Selectable options count
    * @return {Promise<Context | undefined>}
    */
   public async createPoll(
     name: string,
     values: string[],
+    selectableOptionsCount: number = values.length,
   ): Promise<Context | undefined> {
-    return this.sendRaw({
-      poll: {
-        name,
-        values,
+    if (values.length < 2) {
+      throw new TypeError('Minimum createPoll.values is 2');
+    } else if (
+      selectableOptionsCount > values.length ||
+      selectableOptionsCount < 2
+    ) {
+      throw new TypeError('Invalid selectableOptionsCount');
+    }
+
+    const fullMsg = await generateWAMessage(
+      this.raw.key.remoteJid as string,
+      {
+        text: 'SHOULD_REMOVED',
       },
+      {
+        userJid: this.client.raw?.authState.creds.me?.id as string,
+        upload: this.client.raw?.waUploadToServer as WAMediaUploadFunction,
+        getUrlInfo: (text) => getUrlInfo(text),
+      },
+    );
+
+    fullMsg.message = proto.Message.fromObject({
+      pollCreationMessage: proto.Message.PollCreationMessage.fromObject({
+        name,
+        options: values.map((v) =>
+          proto.Message.PollCreationMessage.Option.fromObject({
+            optionName: v,
+          }),
+        ),
+        selectableOptionsCount,
+      }),
+      messageContextInfo: proto.MessageContextInfo.fromObject({
+        messageSecret: getCrypto().getRandomValues(new Uint8Array(32)),
+      }),
     });
+
+    await this.client.raw?.relayMessage(
+      this.raw.key.remoteJid as string,
+      fullMsg.message,
+      {
+        messageId: fullMsg.key.id as string,
+        additionalAttributes: {},
+      },
+    );
+
+    process.nextTick(() => {
+      this.client.raw?.processingMutex.mutex(() =>
+        this.client.raw?.upsertMessage(fullMsg, 'append'),
+      );
+    });
+
+    return new Context(this.client, fullMsg);
   }
 
   /**
@@ -553,10 +610,55 @@ export class Context {
   }
 
   /**
-   * Get poll updates
-   * @description Alias 'getPollUpdateMessage' on '@adiwajshing/baileys'
+   * * Get poll updates from the message
+   * @param {Uint8Array} encKey Poll Creation messageSecret
+   * @param {string[]} options Poll values
+   * @param {string?} sender Poll creator jid
+   * @param {boolean?} withSelectedOptions return 'selectedOptions' if enabled
    */
-  public getPollUpdates = getPollUpdateMessage;
+  public async getPollUpdateMessage(
+    encKey: Uint8Array,
+    options: string[],
+    sender?: string,
+    withSelectedOptions = false,
+  ): Promise<PollUpdateMessageResult> {
+    if (!this.raw.message?.pollUpdateMessage || !encKey) {
+      throw new TypeError('Missing pollUpdateMessage or the encKey');
+    }
+
+    sender = jidNormalizedUser(
+      this.raw.message.pollUpdateMessage.pollCreationMessageKey?.participant ||
+        (sender as string),
+    );
+
+    if (!sender.length) {
+      throw new TypeError('Invalid poll sender');
+    }
+
+    let hashes = await decryptPollMessageRaw(
+      encKey,
+      this.raw.message.pollUpdateMessage.vote?.encPayload as Uint8Array, // enc payload
+      this.raw.message.pollUpdateMessage.vote?.encIv as Uint8Array, //  enc iv
+      sender, //  poll sender
+      this.raw.message.pollUpdateMessage.pollCreationMessageKey?.id as string, // poll id
+      jidNormalizedUser(
+        this.raw.key.remoteJid?.endsWith('@g.us')
+          ? ((this.raw.key.participant || this.raw.participant) as string)
+          : (this.raw.key.remoteJid as string),
+      ), // voter
+    );
+
+    if (hashes.length === 1 && !hashes[0].length) {
+      hashes = [];
+    }
+
+    return withSelectedOptions
+      ? {
+          hashes,
+          selectedOptions: await comparePollMessage(options, hashes),
+        }
+      : { hashes };
+  }
 
   /**
    * Get raw message.
