@@ -14,9 +14,11 @@ import {
   Command,
   ClientOptions,
   PollUpdateMessageResult,
+  ButtonType,
 } from '../@typings';
 import { type Client } from '../bot';
 import { comparePollMessage, decryptPollMessageRaw, getCrypto } from '../utils';
+import { ButtonBuilder } from '../utils/builder';
 import { MessageCollector } from './collector';
 import { Image, Sticker, Video } from './entities';
 import { GroupContext } from './group';
@@ -118,42 +120,20 @@ export class Context {
   }
 
   /**
-   * Get detail from clicked basic button
-   *
-   * @return {proto.Message.IButtonsResponseMessage | undefined}
-   */
-  public get replyFromBasicButton():
-    | proto.Message.IButtonsResponseMessage
-    | undefined {
-    if (this.raw.message?.buttonsResponseMessage) {
-      return this.raw.message.buttonsResponseMessage;
-    } else return undefined;
-  }
-
-  /**
-   * Get detail from clicked template button
+   * Get detail from clicked button
    *
    * @return {proto.Message.ITemplateButtonReplyMessage | undefined}
    */
-  public get replyFromTemplateButton():
+  public get clickedButtons():
+    | proto.Message.IButtonsResponseMessage
     | proto.Message.ITemplateButtonReplyMessage
-    | undefined {
-    if (this.raw.message?.templateButtonReplyMessage) {
-      return this.raw.message.templateButtonReplyMessage;
-    } else return undefined;
-  }
-
-  /**
-   * Get detail from clicked list button
-   *
-   * @return {proto.Message.IListResponseMessage | undefined}
-   */
-  public get replyFromListButton():
     | proto.Message.IListResponseMessage
     | undefined {
-    if (this.raw.message?.listResponseMessage) {
-      return this.raw.message.listResponseMessage;
-    } else return undefined;
+    const responseButtons =
+      this.raw.message?.buttonsResponseMessage ||
+      this.raw.message?.templateButtonReplyMessage ||
+      this.raw.message?.listResponseMessage;
+    return responseButtons || undefined;
   }
 
   public flags: string[] = [];
@@ -164,10 +144,10 @@ export class Context {
    * @return {Command}
    */
   public getCommand(): Command | undefined {
-    if (!this.isCommand() && !this.isResponseFromButton()) return undefined;
+    if (!this.isCommand() && !this.clickedButtons) return undefined;
 
     if (
-      this.isResponseFromButton() &&
+      !!this.clickedButtons &&
       !this.client.commands.get(this.getIdButton() as string)
     ) {
       this.client.logger.warn(
@@ -176,12 +156,14 @@ export class Context {
       return undefined;
     }
 
-    return this.isResponseFromButton()
-      ? this.client.commands.get(this.getIdButton() as string)
-      : this.client.commands.get(this.getCommandName()) ||
-          [...this.client.commands.values()].find((c) =>
-            c.options?.aliases?.includes(this.getCommandName()),
-          );
+    return (
+      this.client.commands.get(
+        this.getCommandName() || (this.getIdButton() as string),
+      ) ||
+      [...this.client.commands.values()].find((c) =>
+        c.options?.aliases?.includes(this.getCommandName()),
+      )
+    );
   }
 
   /**
@@ -266,21 +248,6 @@ export class Context {
   }
 
   /**
-   * Knows the message is button.
-   *
-   * @return {boolean}
-   */
-  public isResponseFromButton(): boolean {
-    if (
-      this.replyFromBasicButton ||
-      this.replyFromListButton ||
-      this.replyFromTemplateButton
-    )
-      return true;
-    else return false;
-  }
-
-  /**
    * Get the prefix from the message
    *
    * @return {string}
@@ -306,13 +273,16 @@ export class Context {
   /**
    * Get the id button from message
    *
-   * @return {string}
+   * @return {string | undefined | null}
    */
   public getIdButton(): string | undefined | null {
     return (
-      this.replyFromBasicButton?.selectedButtonId ||
-      this.replyFromListButton?.singleSelectReply?.selectedRowId ||
-      this.replyFromTemplateButton?.selectedId
+      (this.clickedButtons as proto.Message.IListResponseMessage)
+        ?.singleSelectReply?.selectedRowId ||
+      (this.clickedButtons as proto.Message.ITemplateButtonReplyMessage)
+        ?.selectedId ||
+      (this.clickedButtons as proto.Message.IButtonsResponseMessage)
+        ?.selectedButtonId
     );
   }
 
@@ -586,35 +556,18 @@ export class Context {
     );
   }
 
-  // /**
-  //  * Reply a message using button template
-  //  *
-  //  * @param {"basic" | "list" | "template"} type Type of button
-  //  * @param {AnyMessageContent?} options Reply message options
-  //  */
-  // public async replyWithButton<T extends ButtonType = 'basic'>(
-  // type: T,
-  // options: ButtonOptions<T>,
-  //   ) {
-  //     switch (type) {
-  //       case 'basic':
-  //         return this.sendRaw(options, { quoted: this.raw });
-  //       case 'list':
-  //         return this.sendRaw(options, { quoted: this.raw });
-  //       case 'template':
-  //         return this.sendRaw(options, { quoted: this.raw });
-  //       default:
-  //         return this.sendRaw({ viewOnce: true, ...options }, { quoted: this.raw });
-  //     }
-  //   }
-
   /**
    * Reply a message using button template
    *
-   * @param {AnyMessageContent} options Reply message options
+   * @param {AnyMessageContent} content Reply message options
    */
-  public async replyWithButton(options: AnyMessageContent) {
-    return this.sendRaw(options, { quoted: this.raw });
+  public async replyWithButton<T extends ButtonType>(
+    content: AnyMessageContent | ButtonBuilder<T>,
+  ) {
+    return this.sendRaw(
+      content instanceof ButtonBuilder ? content.build() : content,
+      { quoted: this.raw },
+    );
   }
 
   /**

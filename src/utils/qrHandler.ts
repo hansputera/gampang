@@ -2,7 +2,8 @@ import type { ClientOptions } from '../@typings';
 import qrcode from 'qrcode';
 import http from 'node:http';
 import type { Client } from '../bot';
-import { unlink } from 'node:fs/promises';
+import { existsSync, unlinkSync } from 'node:fs';
+import { resolve as pathResolve } from 'node:path';
 
 export const qrHandler = async (
   client: Client,
@@ -22,10 +23,14 @@ export const qrHandler = async (
       throw new TypeError('Please fill QR Path destination!');
     qrcode.toFile(qrOptions?.options?.dest as string, qr, (err) => {
       if (err) console.error('Something was wrong:', err);
-
-      client.on('ready', () =>
-        unlink(qrOptions?.options?.dest as string).catch(console.error),
-      );
+      else {
+        const pathFile = qrOptions.options?.dest;
+        if (typeof pathFile === 'string' && existsSync(pathResolve(pathFile))) {
+          client.on('ready', () => {
+            unlinkSync(pathResolve(pathFile));
+          });
+        }
+      }
     });
   } else if (qrOptions?.store === 'web') {
     if (!qrOptions.options?.port || typeof qrOptions.options?.port !== 'number')

@@ -13,34 +13,38 @@ export interface PollCreateEventData {
   pollId: string;
 }
 
-// interface BaseButtonOptions {
-//   text: string;
-//   footer?: string;
-// }
+export type UnionToIntersection<U> = (
+  U extends any ? (k: U) => void : never
+) extends (k: infer I) => void
+  ? I
+  : never;
 
-// export interface ButtonBasicOptions extends BaseButtonOptions {
-//   buttons: Pick<WAProto.Message.IButtonsMessage, 'buttons'>;
-//   headerType?: Pick<WAProto.Message.IButtonsMessage, 'headerType'>;
-// }
+export type ButtonType = 'basic' | 'list' | 'template';
 
-// export interface ButtonTemplateOptions extends BaseButtonOptions {
-//   viewOnce: boolean;
-//   templateButtons: WAProto.IHydratedTemplateButton[];
-// }
+export interface ButtonListOptions {
+  highlightText?: string;
+  sections: {
+    title: string;
+    buttons: (ButtonItem & { description?: string })[];
+  };
+  buttonText: string;
+}
+export interface ButtonBasicOptions {
+  button: ButtonItem;
+}
 
-// export interface ButtonListOptions extends BaseButtonOptions {
-//   sections: WAProto.Message.ListMessage.ISection[];
-//   title: string;
-//   buttonText: string;
-// }
+export interface ButtonItem {
+  text: string;
+  cmdName: string;
+}
 
-// export type ButtonType = 'basic' | 'list' | 'template';
+interface BaseButtonOptions {
+  header: string;
+  footer?: string | undefined;
+}
 
-// export type ButtonOptions<T extends ButtonType> = T extends 'basic'
-//   ? ButtonBasicOptions
-//   : T extends 'list'
-//   ? ButtonListOptions
-//   : ButtonTemplateOptions;
+export type ButtonOptions = BaseButtonOptions &
+  (ButtonListOptions | ButtonBasicOptions);
 
 export interface PollVoteEventData {
   pollId: string;
