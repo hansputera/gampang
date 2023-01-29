@@ -56,16 +56,23 @@ client.command(
   'debug',
   async (ctx) => {
     // test feature on this scope
-    const menu  = new ButtonBuilder("list")
-    menu.set("highlightText", "MENU | Hanif's Bot").set("buttonText", "menu").set("footer", "cc @ 2023").set("header", " lorem  lorem  lorem  lorem  lorem  lorem  lorem  lorem ").set("sections", {
-      title: "debug command",
-      buttons: [{
-        cmdName: "test",
-        description: "return ping",
-        text: "ping"
-      }]
-    })
-    ctx.replyWithButton(menu)
+    const menu = new ButtonBuilder('list');
+    menu
+      .set('highlightText', "MENU | Hanif's Bot")
+      .set('buttonText', 'menu')
+      .set('footer', 'cc @ 2023')
+      .set('header', ' lorem  lorem  lorem  lorem  lorem  lorem  lorem  lorem ')
+      .set('sections', {
+        title: 'debug command',
+        buttons: [
+          {
+            cmdName: 'test',
+            description: 'return ping',
+            text: 'ping',
+          },
+        ],
+      });
+    ctx.replyWithButton(menu);
   },
   {
     'aliases': ['hi', 'hey', '_'],
