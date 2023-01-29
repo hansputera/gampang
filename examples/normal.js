@@ -1,4 +1,4 @@
-const { Client, SessionManager } = require('../dist/index.js');
+const { Client, SessionManager, ButtonBuilder } = require('../dist/index.js');
 const path = require('node:path');
 
 const session = new SessionManager(
@@ -11,9 +11,9 @@ const session = new SessionManager(
 // );
 const client = new Client(session, {
   'qr': {
-    'store': 'web',
+    'store': 'file',
     'options': {
-      'port': 3000,
+      'dest': path.resolve(__dirname, 'scan.jpg'),
     },
   },
   'prefixes': ['.'],
@@ -56,6 +56,23 @@ client.command(
   'debug',
   async (ctx) => {
     // test feature on this scope
+    const menu = new ButtonBuilder('list');
+    menu
+      .set('highlightText', "MENU | Hanif's Bot")
+      .set('buttonText', 'menu')
+      .set('footer', 'cc @ 2023')
+      .set('header', ' lorem  lorem  lorem  lorem  lorem  lorem  lorem  lorem ')
+      .set('sections', {
+        title: 'debug command',
+        buttons: [
+          {
+            cmdName: 'test',
+            description: 'return ping',
+            text: 'ping',
+          },
+        ],
+      });
+    ctx.replyWithButton(menu);
   },
   {
     'aliases': ['hi', 'hey', '_'],

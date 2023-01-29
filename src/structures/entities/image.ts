@@ -6,7 +6,7 @@ import { BaseEntity } from './baseEntity';
  */
 export class Image extends BaseEntity {
   /**
-   * @param {proto..Message.IImageMessage} raw
+   * @param {proto.Message.IImageMessage} raw
    */
   constructor(public raw: proto.Message.IImageMessage) {
     super(raw);
