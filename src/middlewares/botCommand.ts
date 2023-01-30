@@ -18,13 +18,15 @@ export const botCommand: MiddlewareFunc = async (context: Context) => {
       return false;
     }
 
+    let isCooldown: boolean | undefined = false;
+
     try {
       const opts = context.client.getOptions();
       if (typeof opts?.middlewares?.cooldown === 'function') {
         return await opts.middlewares.cooldown(context);
       }
 
-      await botCommandCooldown(context, cmd);
+      isCooldown = await botCommandCooldown(context, cmd);
     } catch (err: unknown) {
       if ((err as Error).message) {
         await context.reply(textFormat('Error: %s', (err as Error).message));
@@ -33,7 +35,7 @@ export const botCommand: MiddlewareFunc = async (context: Context) => {
       return false;
     }
 
-    cmd.run(context);
+    !isCooldown && cmd.run(context);
     return true;
   }
 

@@ -4,7 +4,7 @@ import type { Context } from '../structures/context';
 export const botCommandCooldown = async (
   context: Context,
   cmd: Command,
-): Promise<void> => {
+): Promise<boolean | undefined> => {
   if (context.client.getOptions()?.disableCooldown) {
     return;
   }
@@ -17,6 +17,12 @@ export const botCommandCooldown = async (
   const cooldown = (await context.client.dataStores?.get(
     cooldownKey,
   )) as string;
+
+  if (context.client.dataStores instanceof Map) {
+    setTimeout(() => {
+      context.client.dataStores?.delete(cooldownKey);
+    }, cmd.options?.cooldown || 5_000);
+  }
 
   if (!cooldown)
     await context.client.dataStores?.set(
@@ -31,11 +37,5 @@ export const botCommandCooldown = async (
     }
   }
 
-  if (context.client.dataStores instanceof Map) {
-    setTimeout(() => {
-      context.client.dataStores?.delete(cooldownKey);
-    }, cmd.options?.cooldown || 5_000);
-  }
-
-  return;
+  return !!cooldown;
 };
