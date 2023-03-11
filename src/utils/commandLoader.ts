@@ -52,3 +52,10 @@ export class CommandLoader {
     return this.load();
   }
 }
+
+/**
+ * Build command structure
+ * @param {Command} args Command's args
+ * @return {Command}
+ */
+export const buildCommand = (args: Command): Command => args;
