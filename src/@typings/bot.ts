@@ -24,6 +24,7 @@ export interface ClientOptions {
   middlewares?: {
     cooldown?: MiddlewareFunc;
   };
+  saveGroupMetadata?: boolean;
   logger?: pino.LoggerOptions;
   disableCooldown?: boolean;
 }
