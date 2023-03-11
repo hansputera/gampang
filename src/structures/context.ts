@@ -681,7 +681,7 @@ export class Context {
     encKey: Uint8Array,
     options: string[],
     sender?: string,
-    withSelectedOptions = false,
+    withSelectedOptions: boolean | null = false,
   ): Promise<PollUpdateMessageResult> {
     if (!this.raw.message?.pollUpdateMessage || !encKey) {
       throw new TypeError('Missing pollUpdateMessage or the encKey');
