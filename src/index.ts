@@ -2,6 +2,7 @@ export * from './logger';
 export * from './bot';
 export * from './@typings';
 export * from './structures';
+export * from './utils/commandLoader';
 export * from './utils/sessionManager';
 export * from './utils/builder';
 /**
