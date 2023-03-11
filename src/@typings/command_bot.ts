@@ -8,6 +8,7 @@ export interface CommandOptions {
   ownerOnly?: boolean;
   aliases?: string[];
   cooldownMessage?: (ctx: Context) => Promise<void> | void;
+  category?: string;
 }
 
 export interface Command {
