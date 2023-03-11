@@ -10,15 +10,18 @@ const session = new SessionManager(
 //   'file',
 // );
 const client = new Client(session, {
-    'qr': {
-      'store': 'web',
-      'options': {
-        'port': 3000,
-      },
+  'qr': {
+    'store': 'web',
+    'options': {
+      'port': 3000,
     },
-    'prefixes': ['.'],
-  });
-const commandLoader = new CommandLoader(client, path.resolve(__dirname, 'commands'));
+  },
+  'prefixes': ['.'],
+});
+const commandLoader = new CommandLoader(
+  client,
+  path.resolve(__dirname, 'commands'),
+);
 void commandLoader.load();
 
 client.on('ready', () => {
