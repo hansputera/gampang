@@ -18,7 +18,7 @@ export const qrHandler = async (
 
   client.removeListener('qr', defineQrCode);
 
-  if (qrOptions?.store === 'file') {
+  if (qrOptions?.store === 'file' && qr.length) {
     if (typeof qrOptions?.options?.dest !== 'string')
       throw new TypeError('Please fill QR Path destination!');
     qrcode.toFile(qrOptions?.options?.dest as string, qr, (err) => {
@@ -32,7 +32,7 @@ export const qrHandler = async (
         }
       }
     });
-  } else if (qrOptions?.store === 'web') {
+  } else if (qrOptions?.store === 'web' && qr.length) {
     if (!qrOptions.options?.port || typeof qrOptions.options?.port !== 'number')
       throw new TypeError('Please fill QR Server Port number');
     client.qrServer = http.createServer();
@@ -53,7 +53,7 @@ export const qrHandler = async (
     });
 
     client.qrServer.listen(port);
-  } else if (qrOptions?.store === 'terminal') {
+  } else if (qrOptions?.store === 'terminal' && qr.length) {
     console.log(
       await qrcode.toString(qr, {
         'type': 'terminal',
