@@ -187,8 +187,6 @@ export class Client extends EventEmitter {
       this.raw?.ev.on(value.event, (arg) => value.func(this, arg));
     });
 
-    this.raw.ev.on('messages.upsert', console.log);
-
     if (!this.raw.user?.id)
       qrHandler(this, this.options?.qr as ClientOptions['qr']);
 
