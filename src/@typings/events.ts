@@ -1,6 +1,4 @@
-import type {
-  BaileysEventMap,
-} from '@adiwajshing/baileys';
+import type { BaileysEventMap } from '@adiwajshing/baileys';
 import type { Client } from '../bot';
 
 export type BaileysEventList = keyof BaileysEventMap;
