@@ -39,18 +39,21 @@ export const readSingleAuthFile = async (
         keys: {
           get: <T extends keyof SignalDataTypeMap>(type: T, ids: string[]) => {
             const key = KEY_MAP[type];
-            return ids.reduce((dict: Record<string, SignalDataTypeMap[T]>, id: string) => {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              let value = (json.keys as any)[key]?.[id];
-              if (value) {
-                if (type === 'app-state-sync-key') {
-                  value = proto.Message.AppStateSyncKeyData.fromObject(value);
+            return ids.reduce(
+              (dict: Record<string, SignalDataTypeMap[T]>, id: string) => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                let value = (json.keys as any)[key]?.[id];
+                if (value) {
+                  if (type === 'app-state-sync-key') {
+                    value = proto.Message.AppStateSyncKeyData.fromObject(value);
+                  }
+                  dict[id] = value;
                 }
-                dict[id] = value;
-              }
 
-              return dict;
-            }, {});
+                return dict;
+              },
+              {},
+            );
           },
           set: async (data) => {
             for (const key in data) {
