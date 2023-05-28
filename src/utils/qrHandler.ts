@@ -10,29 +10,36 @@ export const qrHandler = async (
   qrOptions: ClientOptions['qr'],
 ): Promise<void> => {
   client.logger.info('QR Handler initialized');
-  let qr = '';
+  let qr: string = '';
 
-  const defineQrCode = (code: string) => {
+  const defineQrCode = async (code: string) => {
+    if (qrOptions?.store === 'file' && code.length) {
+      if (typeof qrOptions?.options?.dest !== 'string')
+        throw new TypeError('Please fill QR Path destination!');
+      qrcode.toFile(qrOptions?.options?.dest as string, code, (err) => {
+        if (err) console.error('Something was wrong:', err);
+        else {
+          const pathFile = qrOptions.options?.dest;
+          if (typeof pathFile === 'string' && existsSync(pathResolve(pathFile))) {
+            client.on('ready', () => {
+              unlinkSync(pathResolve(pathFile));
+            });
+          }
+        }
+      });
+    } else if (qrOptions?.store === 'terminal' && code.length) {
+      console.log(
+        await qrcode.toString(code, {
+          'type': 'terminal',
+          'small': true,
+        }),
+      );
+    }
+
     qr = code;
   };
 
-  client.removeListener('qr', defineQrCode);
-
-  if (qrOptions?.store === 'file' && qr.length) {
-    if (typeof qrOptions?.options?.dest !== 'string')
-      throw new TypeError('Please fill QR Path destination!');
-    qrcode.toFile(qrOptions?.options?.dest as string, qr, (err) => {
-      if (err) console.error('Something was wrong:', err);
-      else {
-        const pathFile = qrOptions.options?.dest;
-        if (typeof pathFile === 'string' && existsSync(pathResolve(pathFile))) {
-          client.on('ready', () => {
-            unlinkSync(pathResolve(pathFile));
-          });
-        }
-      }
-    });
-  } else if (qrOptions?.store === 'web' && qr.length) {
+  if (qrOptions?.store === 'web') {
     if (!qrOptions.options?.port || typeof qrOptions.options?.port !== 'number')
       throw new TypeError('Please fill QR Server Port number');
     client.qrServer = http.createServer();
@@ -41,7 +48,7 @@ export const qrHandler = async (
 
     client.qrServer?.on('request', async (_, res) => {
       res.setHeader('Content-Type', 'text/html');
-      return res.end(`<img src="${await qrcode.toDataURL(qr)}" />`);
+      return res.end(qr.length ? `<img src="${await qrcode.toDataURL(qr)}" />` : 'no qr');
     });
 
     client.qrServer?.on('error', (err) => {
@@ -53,15 +60,9 @@ export const qrHandler = async (
     });
 
     client.qrServer.listen(port);
-  } else if (qrOptions?.store === 'terminal' && qr.length) {
-    console.log(
-      await qrcode.toString(qr, {
-        'type': 'terminal',
-        'small': true,
-      }),
-    );
   }
 
+  client.removeListener('qr', defineQrCode);
   client.on('qr', defineQrCode);
   return;
 };
