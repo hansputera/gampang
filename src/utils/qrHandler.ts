@@ -10,7 +10,7 @@ export const qrHandler = async (
   qrOptions: ClientOptions['qr'],
 ): Promise<void> => {
   client.logger.info('QR Handler initialized');
-  let qr: string = '';
+  let qr = '';
 
   const defineQrCode = async (code: string) => {
     if (qrOptions?.store === 'file' && code.length) {
@@ -20,7 +20,10 @@ export const qrHandler = async (
         if (err) console.error('Something was wrong:', err);
         else {
           const pathFile = qrOptions.options?.dest;
-          if (typeof pathFile === 'string' && existsSync(pathResolve(pathFile))) {
+          if (
+            typeof pathFile === 'string' &&
+            existsSync(pathResolve(pathFile))
+          ) {
             client.on('ready', () => {
               unlinkSync(pathResolve(pathFile));
             });
@@ -48,7 +51,9 @@ export const qrHandler = async (
 
     client.qrServer?.on('request', async (_, res) => {
       res.setHeader('Content-Type', 'text/html');
-      return res.end(qr.length ? `<img src="${await qrcode.toDataURL(qr)}" />` : 'no qr');
+      return res.end(
+        qr.length ? `<img src="${await qrcode.toDataURL(qr)}" />` : 'no qr',
+      );
     });
 
     client.qrServer?.on('error', (err) => {
