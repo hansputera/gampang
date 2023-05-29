@@ -590,6 +590,16 @@ export class Context {
         return this.delete();
       }
     }
+
+    const contextInfo = this.raw.message?.extendedTextMessage?.contextInfo;
+    if (contextInfo) {
+      this.raw.key = {
+        ...this.raw.key,
+        participant: contextInfo.participant,
+        id: contextInfo.stanzaId,
+      }
+    }
+
     return this.sendRaw({
       delete: this.raw.key,
     });
