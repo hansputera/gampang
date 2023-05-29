@@ -577,14 +577,20 @@ export class Context {
   public async delete(): Promise<Context | undefined> {
     if (this.isGroup && !this.isFromMe) {
       const group = this.getGroup();
-      if (
-        group &&
-        group.members.findIndex(
-          (mem) =>
-            mem.jid === this.raw.key.id && (mem.isAdmin || mem.isSuperAdmin),
-        ) === -1
-      ) {
+      const [member, me] = [
+        group?.members.find(mem => mem.jid === this.rawMessage.key.id),
+        group?.members.find(mem =>  mem.jid === this.client.raw?.user?.id),
+      ];
+      
+      if (!me || !member) {
         return undefined;
+      } else if (me && member) {
+        if (!(me.isAdmin || me.isSuperAdmin) && (member.isAdmin || member.isSuperAdmin))
+          return undefined;
+        
+        return this.sendRaw({
+          delete: this.raw.key,
+        });
       } else {
         await this.syncGroup();
         return this.delete();
