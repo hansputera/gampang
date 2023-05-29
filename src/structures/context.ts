@@ -597,7 +597,7 @@ export class Context {
         ...this.raw.key,
         participant: contextInfo.participant,
         id: contextInfo.stanzaId,
-      }
+      };
     }
 
     return this.sendRaw({
