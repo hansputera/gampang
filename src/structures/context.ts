@@ -578,16 +578,19 @@ export class Context {
     if (this.isGroup && !this.isFromMe) {
       const group = this.getGroup();
       const [member, me] = [
-        group?.members.find(mem => mem.jid === this.rawMessage.key.id),
-        group?.members.find(mem =>  mem.jid === this.client.raw?.user?.id),
+        group?.members.find((mem) => mem.jid === this.rawMessage.key.id),
+        group?.members.find((mem) => mem.jid === this.client.raw?.user?.id),
       ];
-      
+
       if (!me || !member) {
         return undefined;
       } else if (me && member) {
-        if (!(me.isAdmin || me.isSuperAdmin) && (member.isAdmin || member.isSuperAdmin))
+        if (
+          !(me.isAdmin || me.isSuperAdmin) &&
+          (member.isAdmin || member.isSuperAdmin)
+        )
           return undefined;
-        
+
         return this.sendRaw({
           delete: this.raw.key,
         });
