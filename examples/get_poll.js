@@ -30,13 +30,10 @@ client.on('vote', async (vote, ctx) => {
     console.log('vote', vote);
     console.log('saved poll', poll);
     console.log('raw message', ctx.raw);
-    const dec = await ctx.getPollUpdates(
-      ctx.raw,
-      {
-        encKey: poll.encKey,
-        sender: poll.sender,
-        options: poll.options,
-      },
+    const dec = await ctx.getPollUpdateMessage(
+      poll.encKey,
+      poll.options,
+      poll.sender,
       true,
     );
 
