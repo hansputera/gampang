@@ -46,4 +46,3 @@ export interface PollVoteEventData {
   payload: Uint8Array;
   payload_iv: Uint8Array;
 }
-
