@@ -6,13 +6,6 @@ export interface CollectorOptions {
   validation: (ctx: Context) => Promise<boolean> | boolean;
 }
 
-export interface PollCreateEventData {
-  encKey: Uint8Array;
-  options: string[];
-  sender: string;
-  pollId: string;
-}
-
 export type UnionToIntersection<U> = (
   U extends any ? (k: U) => void : never
 ) extends (k: infer I) => void
@@ -54,11 +47,3 @@ export interface PollVoteEventData {
   payload_iv: Uint8Array;
 }
 
-export type PollUpdateMessageResult =
-  | {
-      hashes: string[];
-    }
-  | {
-      hashes: string[];
-      selectedOptions: string[];
-    };

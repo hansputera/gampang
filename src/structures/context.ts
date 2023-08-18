@@ -1,23 +1,17 @@
 import {
   AnyMessageContent,
-  generateWAMessage,
-  getUrlInfo,
   GroupParticipant,
-  jidNormalizedUser,
   MiscMessageGenerationOptions,
   proto,
-  WAMediaUploadFunction,
 } from '@adiwajshing/baileys';
 import Long from 'long';
 import {
   type CollectorOptions,
   Command,
   ClientOptions,
-  PollUpdateMessageResult,
   ButtonType,
 } from '../@typings';
 import { type Client } from '../bot';
-import { comparePollMessage, decryptPollMessageRaw, getCrypto } from '../utils';
 import { ButtonBuilder } from '../utils/builder';
 import { MessageCollector } from './collector';
 import { Image, Sticker, Video } from './entities';
@@ -635,49 +629,13 @@ export class Context {
       throw new TypeError('Invalid selectableOptionsCount');
     }
 
-    const fullMsg = await generateWAMessage(
-      this.raw.key.remoteJid as string,
-      {
-        text: 'SHOULD_REMOVED',
-      },
-      {
-        userJid: this.client.raw?.authState.creds.me?.id as string,
-        upload: this.client.raw?.waUploadToServer as WAMediaUploadFunction,
-        getUrlInfo: (text) => getUrlInfo(text),
-      },
-    );
-
-    fullMsg.message = proto.Message.fromObject({
-      pollCreationMessage: proto.Message.PollCreationMessage.fromObject({
+    return this.sendRaw({
+      poll: {
         name,
-        options: values.map((v) =>
-          proto.Message.PollCreationMessage.Option.fromObject({
-            optionName: v,
-          }),
-        ),
-        selectableOptionsCount,
-      }),
-      messageContextInfo: proto.MessageContextInfo.fromObject({
-        messageSecret: getCrypto().getRandomValues(new Uint8Array(32)),
-      }),
-    });
-
-    await this.client.raw?.relayMessage(
-      this.raw.key.remoteJid as string,
-      fullMsg.message,
-      {
-        messageId: fullMsg.key.id as string,
-        additionalAttributes: {},
+        values,
+        selectableCount: selectableOptionsCount,
       },
-    );
-
-    process.nextTick(() => {
-      this.client.raw?.processingMutex.mutex(() =>
-        this.client.raw?.upsertMessage(fullMsg, 'append'),
-      );
     });
-
-    return new Context(this.client, fullMsg);
   }
 
   /**
@@ -687,57 +645,6 @@ export class Context {
    */
   public getCollector(options?: CollectorOptions): MessageCollector {
     return new MessageCollector(this, options);
-  }
-
-  /**
-   * * Get poll updates from the message
-   * @param {Uint8Array} encKey Poll Creation messageSecret
-   * @param {string[]} options Poll values
-   * @param {string?} sender Poll creator jid
-   * @param {boolean?} withSelectedOptions return 'selectedOptions' if enabled
-   */
-  public async getPollUpdateMessage(
-    encKey: Uint8Array,
-    options: string[],
-    sender?: string,
-    withSelectedOptions: boolean | null = false,
-  ): Promise<PollUpdateMessageResult> {
-    if (!this.raw.message?.pollUpdateMessage || !encKey) {
-      throw new TypeError('Missing pollUpdateMessage or the encKey');
-    }
-
-    sender = jidNormalizedUser(
-      this.raw.message.pollUpdateMessage.pollCreationMessageKey?.participant ||
-        (sender as string),
-    );
-
-    if (!sender.length) {
-      throw new TypeError('Invalid poll sender');
-    }
-
-    let hashes = await decryptPollMessageRaw(
-      encKey,
-      this.raw.message.pollUpdateMessage.vote?.encPayload as Uint8Array, // enc payload
-      this.raw.message.pollUpdateMessage.vote?.encIv as Uint8Array, //  enc iv
-      sender, //  poll sender
-      this.raw.message.pollUpdateMessage.pollCreationMessageKey?.id as string, // poll id
-      jidNormalizedUser(
-        this.raw.key.remoteJid?.endsWith('@g.us')
-          ? ((this.raw.key.participant || this.raw.participant) as string)
-          : (this.raw.key.remoteJid as string),
-      ), // voter
-    );
-
-    if (hashes.length === 1 && !hashes[0].length) {
-      hashes = [];
-    }
-
-    return withSelectedOptions
-      ? {
-          hashes,
-          selectedOptions: await comparePollMessage(options, hashes),
-        }
-      : { hashes };
   }
 
   /**
