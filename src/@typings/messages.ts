@@ -39,6 +39,13 @@ interface BaseButtonOptions {
 export type ButtonOptions = BaseButtonOptions &
   (ButtonListOptions | ButtonBasicOptions);
 
+export interface PollCreateEventData {
+  encKey: Uint8Array;
+  options: string[];
+  sender: string;
+  pollId: string;
+}
+
 export interface PollVoteEventData {
   pollId: string;
   voter: string;
