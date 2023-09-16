@@ -7,7 +7,9 @@ export const messageCollector: MiddlewareFunc = async (ctx: Context) => {
   );
 
   if (session && (await session.validate(ctx))) {
-    ctx.client.logger.debug(`msgCollector session detected on ${ctx.getCurrentJid()}`);
+    ctx.client.logger.debug(
+      `msgCollector session detected on ${ctx.getCurrentJid()}`,
+    );
     session.contexts.push(ctx);
     if (session.contexts.length >= session.maxMessages) {
       session.destroy();

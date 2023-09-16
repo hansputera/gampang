@@ -36,16 +36,18 @@ export class CommandLoader {
         if (Reflect.has(command, 'default'))
           command = Reflect.get(command, 'default');
 
-        const cmdName = pathBase(pathResolve(directoryPath, folder).replace(/\.[^.]*$/, ''));
-        this.logger.info(`Command ${cmdName} has been loaded on category ${pathBase(directoryPath)}`);
-        this.client.command(
-          cmdName,
-          command.run,
-          {
-            ...command.options,
-            category: pathBase(directoryPath),
-          },
+        const cmdName = pathBase(
+          pathResolve(directoryPath, folder).replace(/\.[^.]*$/, ''),
         );
+        this.logger.info(
+          `Command ${cmdName} has been loaded on category ${pathBase(
+            directoryPath,
+          )}`,
+        );
+        this.client.command(cmdName, command.run, {
+          ...command.options,
+          category: pathBase(directoryPath),
+        });
       } else {
         await this.load(pathResolve(directoryPath, folder));
       }
