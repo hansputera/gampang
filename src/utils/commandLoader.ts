@@ -2,16 +2,23 @@ import { type Client } from '../bot';
 import { readdir, stat } from 'node:fs/promises';
 import { resolve as pathResolve, basename as pathBase } from 'node:path';
 import { type Command } from '../@typings';
+import pino from 'pino';
 
 /**
  * @class CommandLoader
  */
 export class CommandLoader {
+  private logger!: pino.Logger;
+
   /**
    * @constructor
    * @param {string} directoryPath Command's directory
    */
-  constructor(private client: Client, private directoryPath: string) {}
+  constructor(private client: Client, private directoryPath: string) {
+    this.logger = client.logger.child(client.logger.bindings(), {
+      msgPrefix: '[CommandLoader] ',
+    });
+  }
 
   /**
    * Load commands
@@ -29,8 +36,10 @@ export class CommandLoader {
         if (Reflect.has(command, 'default'))
           command = Reflect.get(command, 'default');
 
+        const cmdName = pathBase(pathResolve(directoryPath, folder).replace(/\.[^.]*$/, ''));
+        this.logger.info(`Command ${cmdName} has been loaded on category ${pathBase(directoryPath)}`);
         this.client.command(
-          pathBase(pathResolve(directoryPath, folder).replace(/\.[^.]*$/, '')),
+          cmdName,
           command.run,
           {
             ...command.options,

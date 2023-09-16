@@ -35,7 +35,10 @@ export const botCommand: MiddlewareFunc = async (context: Context) => {
       return false;
     }
 
-    !isCooldown && cmd.run(context);
+    if (!isCooldown) {
+      context.client.logger.debug(`command ${context.getCommandName()} executed on ${context.getCurrentJid()}`);
+      cmd.run(context);
+    }
     return true;
   }
 

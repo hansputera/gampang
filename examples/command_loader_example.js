@@ -24,7 +24,7 @@ const commandLoader = new CommandLoader(
 );
 void commandLoader.load();
 
-client.on('ready', () => {
+client.on('ready', async () => {
   console.log(client.raw?.user, 'ready');
 });
 
