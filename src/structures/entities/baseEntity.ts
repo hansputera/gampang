@@ -22,7 +22,7 @@ export abstract class BaseEntity {
       | proto.Message.IImageMessage
       | proto.Message.IVideoMessage
       | proto.Message.IStickerMessage
-      | proto.Message.IDocumentMessage
+      | proto.Message.IDocumentMessage,
   ) {}
 
   /**

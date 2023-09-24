@@ -23,7 +23,7 @@ export class Document extends BaseEntity {
 
   /**
    * Get mimetype from the document
-   * 
+   *
    * @return {string}
    */
   public get mimetype(): string {

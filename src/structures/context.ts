@@ -301,7 +301,7 @@ export class Context {
 
   /**
    * Get a document from this message
-   * 
+   *
    * @return {Document | undefined}
    */
   public get document(): Document | undefined {
