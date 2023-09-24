@@ -36,10 +36,7 @@ export class Context {
     if (groupSync) this.syncGroup();
 
     if (rawMessage.message?.documentWithCaptionMessage?.message) {
-      this.rawMessage = {
-        ...rawMessage,
-        message: rawMessage.message.documentWithCaptionMessage.message,
-      };
+      Reflect.set(this.rawMessage.message as proto.Message, 'documentMessage', rawMessage.message.documentWithCaptionMessage.message.documentMessage);
     }
   }
 
@@ -342,6 +339,10 @@ export class Context {
   public get text(): string {
     if (this.rawMessage.message?.extendedTextMessage) {
       return this.rawMessage.message.extendedTextMessage.text as string;
+    }
+
+    if (this.rawMessage.message?.documentMessage?.caption) {
+      return this.rawMessage.message.documentMessage.caption.trim();
     }
 
     return this.rawMessage.message?.conversation as string;
