@@ -21,7 +21,8 @@ export abstract class BaseEntity {
       | proto.Message.IAudioMessage
       | proto.Message.IImageMessage
       | proto.Message.IVideoMessage
-      | proto.Message.IStickerMessage,
+      | proto.Message.IStickerMessage
+      | proto.Message.IDocumentMessage
   ) {}
 
   /**

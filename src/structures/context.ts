@@ -14,7 +14,7 @@ import {
 import { type Client } from '../bot';
 import { ButtonBuilder } from '../utils/builder';
 import { MessageCollector } from './collector';
-import { Image, Sticker, Video } from './entities';
+import { Document, Image, Sticker, Video } from './entities';
 import { GroupContext } from './group';
 
 /**
@@ -36,7 +36,11 @@ export class Context {
     if (groupSync) this.syncGroup();
 
     if (rawMessage.message?.documentWithCaptionMessage?.message) {
-      Reflect.set(this.rawMessage.message as proto.Message, 'documentMessage', rawMessage.message.documentWithCaptionMessage.message.documentMessage);
+      Reflect.set(
+        this.rawMessage.message as proto.Message,
+        'documentMessage',
+        rawMessage.message.documentWithCaptionMessage.message.documentMessage,
+      );
     }
   }
 
@@ -293,6 +297,19 @@ export class Context {
     if (this.rawMessage.message?.imageMessage) {
       return new Image(this.rawMessage.message.imageMessage);
     } else return undefined;
+  }
+
+  /**
+   * Get a document from this message
+   * 
+   * @return {Document | undefined}
+   */
+  public get document(): Document | undefined {
+    if (this.rawMessage.message?.documentMessage) {
+      return new Document(this.rawMessage.message.documentMessage);
+    }
+
+    return undefined;
   }
 
   /**
