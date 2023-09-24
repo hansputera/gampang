@@ -34,6 +34,13 @@ export class Context {
   ) {
     this.#reloadQuery();
     if (groupSync) this.syncGroup();
+
+    if (rawMessage.message?.documentWithCaptionMessage?.message) {
+      this.rawMessage = {
+        ...rawMessage,
+        message: rawMessage.message.documentWithCaptionMessage.message,
+      };
+    }
   }
 
   /**
