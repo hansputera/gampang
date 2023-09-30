@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@adiwajshing/baileys':
-    specifier: npm:@whiskeysockets/baileys@^6.4.1
-    version: /@whiskeysockets/baileys@6.4.1(sharp@0.31.3)
+    specifier: npm:@whiskeysockets/baileys@^6.5.0
+    version: /@whiskeysockets/baileys@6.5.0(sharp@0.31.3)
   '@adiwajshing/keyed-db':
     specifier: ^0.2.4
     version: 0.2.4
@@ -26,8 +26,8 @@ dependencies:
 
 devDependencies:
   '@types/node':
-    specifier: ^18.17.18
-    version: 18.17.18
+    specifier: ^18.18.1
+    version: 18.18.1
   '@types/qrcode':
     specifier: ^1.5.2
     version: 1.5.2
@@ -297,8 +297,8 @@ packages:
       eslint-visitor-keys: 3.4.3
     dev: true
 
-  /@eslint-community/regexpp@4.8.1:
-    resolution: {integrity: sha512-PWiOzLIUAjN/w5K17PoF4n6sKBw0gqLHPhywmYHP4t1VFQQVYeb1yWsJwnMVEMl3tUHME7X/SJPZLmtG7XBDxQ==}
+  /@eslint-community/regexpp@4.9.0:
+    resolution: {integrity: sha512-zJmuCWj2VLBt4c25CfBIbMZLGLyhkvs7LznyVX5HfpzeocThgIj5XQK4L+g3U36mMcx8bPMhGyPpwCATamC4jQ==}
     engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
     dev: true
 
@@ -476,13 +476,13 @@ packages:
     resolution: {integrity: sha512-F0KIgDJfy2nA3zMLmWGKxcH2ZVEtCZXHHdOQs2gSaQ27+lNeEfGxzkIw90aXswATX7AZ33tahPbzy6KAfUreVw==}
     dev: false
 
-  /@types/node@18.17.18:
-    resolution: {integrity: sha512-/4QOuy3ZpV7Ya1GTRz5CYSz3DgkKpyUptXuQ5PPce7uuyJAOR7r9FhkmxJfvcNUXyklbC63a+YvB3jxy7s9ngw==}
+  /@types/node@18.18.1:
+    resolution: {integrity: sha512-3G42sxmm0fF2+Vtb9TJQpnjmP+uKlWvFa8KoEGquh4gqRmoUG/N0ufuhikw6HEsdG2G2oIKhog1GCTfz9v5NdQ==}
 
   /@types/qrcode@1.5.2:
     resolution: {integrity: sha512-W4KDz75m7rJjFbyCctzCtRzZUj+PrUHV+YjqDp50sSRezTbrtEAIq2iTzC6lISARl3qw+8IlcCyljdcVJE0Wug==}
     dependencies:
-      '@types/node': 18.17.18
+      '@types/node': 18.18.1
     dev: true
 
   /@typescript-eslint/eslint-plugin@5.40.0(@typescript-eslint/parser@5.40.0)(eslint@8.50.0)(typescript@4.8.4):
@@ -632,8 +632,8 @@ packages:
       codec-parser: 2.4.3
     dev: false
 
-  /@whiskeysockets/baileys@6.4.1(sharp@0.31.3):
-    resolution: {integrity: sha512-u4eFC4fhBD6zvgzXFm/SdcFivG87CJK/xQ2H7O9wDiu3MIYrPF117lH5EQkRNqQ1Hg2jw8CgsYe7+soeA993ew==}
+  /@whiskeysockets/baileys@6.5.0(sharp@0.31.3):
+    resolution: {integrity: sha512-ary0RNivsrl56wnn0ta37LwVGpCDabthERCV5lHHsbhJJFfp04g6+reiQAKvxo61oYxwxKjqq33kvID+AOr++A==}
     peerDependencies:
       jimp: ^0.16.1
       link-preview-js: ^3.0.0
@@ -652,10 +652,10 @@ packages:
       '@adiwajshing/keyed-db': 0.2.4
       '@hapi/boom': 9.1.4
       audio-decode: 2.1.5
-      axios: 1.5.0
+      axios: 1.5.1
       cache-manager: 5.2.3
       futoin-hkdf: 1.5.3
-      libphonenumber-js: 1.10.44
+      libphonenumber-js: 1.10.45
       libsignal: github.com/adiwajshing/libsignal-node/11dbd962ea108187c79a7c46fe4d6f790e23da97
       music-metadata: 7.13.4
       node-cache: 5.1.2
@@ -771,8 +771,8 @@ packages:
     engines: {node: '>=14'}
     dev: false
 
-  /axios@1.5.0:
-    resolution: {integrity: sha512-D4DdjDo5CY50Qms0qGQTTw6Q44jl7zRwY7bthds06pUGfChBCTcQs+N743eFWGEd6pRTMd6A+I87aWyFV5wiZQ==}
+  /axios@1.5.1:
+    resolution: {integrity: sha512-Q28iYCWzNHjAm+yEAot5QaAMxhMghWLFVf7rRdwhUI+c2jix2DUXjAHXVi+s1ibs3mjPO/cCgbA++3BjD0vP/A==}
     dependencies:
       follow-redirects: 1.15.3
       form-data: 4.0.0
@@ -831,8 +831,8 @@ packages:
       ieee754: 1.2.1
     dev: false
 
-  /bundle-require@4.0.1(esbuild@0.17.19):
-    resolution: {integrity: sha512-9NQkRHlNdNpDBGmLpngF3EFDcwodhMUuLz9PaWYciVcQF9SE4LFjM2DB/xV1Li5JiuDMv7ZUWuC3rGbqR0MAXQ==}
+  /bundle-require@4.0.2(esbuild@0.17.19):
+    resolution: {integrity: sha512-jwzPOChofl67PSTW2SGubV9HBQAhhR2i6nskiOThauo9dzwDUgOWQScFVaJkjEfYX+UXiD+LEx8EblQMc2wIag==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     peerDependencies:
       esbuild: '>=0.17'
@@ -1156,7 +1156,7 @@ packages:
     hasBin: true
     dependencies:
       '@eslint-community/eslint-utils': 4.4.0(eslint@8.50.0)
-      '@eslint-community/regexpp': 4.8.1
+      '@eslint-community/regexpp': 4.9.0
       '@eslint/eslintrc': 2.1.2
       '@eslint/js': 8.50.0
       '@humanwhocodes/config-array': 0.11.11
@@ -1630,8 +1630,8 @@ packages:
       type-check: 0.4.0
     dev: true
 
-  /libphonenumber-js@1.10.44:
-    resolution: {integrity: sha512-svlRdNBI5WgBjRC20GrCfbFiclbF0Cx+sCcQob/C1r57nsoq0xg8r65QbTyVyweQIlB33P+Uahyho6EMYgcOyQ==}
+  /libphonenumber-js@1.10.45:
+    resolution: {integrity: sha512-eeHcvGafEYCaKB4fo2uBINfG7j7PcGwBHUaTVfbwl/6KcjCgIKNlIOsSXVRp9BH10NQwmvvk+nQ1e/Yp4BGB7w==}
     dev: false
 
   /lilconfig@2.1.0:
@@ -2023,7 +2023,7 @@ packages:
       pump: 3.0.0
       readable-stream: 4.4.2
       secure-json-parse: 2.7.0
-      sonic-boom: 3.3.0
+      sonic-boom: 3.4.0
       strip-json-comments: 3.1.1
     dev: false
 
@@ -2065,7 +2065,7 @@ packages:
       quick-format-unescaped: 4.0.4
       real-require: 0.2.0
       safe-stable-stringify: 2.4.3
-      sonic-boom: 3.3.0
+      sonic-boom: 3.4.0
       thread-stream: 2.4.0
     dev: false
 
@@ -2153,7 +2153,7 @@ packages:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/long': 4.0.2
-      '@types/node': 18.17.18
+      '@types/node': 18.18.1
       long: 4.0.0
     dev: false
 
@@ -2310,8 +2310,8 @@ packages:
       glob: 7.2.3
     dev: true
 
-  /rollup@3.29.2:
-    resolution: {integrity: sha512-CJouHoZ27v6siztc21eEQGo0kIcE5D1gVPA571ez0mMYb25LGYGKnVNXpEj5MGlepmDWGXNjDB5q7uNiPHC11A==}
+  /rollup@3.29.4:
+    resolution: {integrity: sha512-oWzmBZwvYrU0iJHtDmhsm662rC15FRXmcjCk1xD771dFDx5jJ02ufAQQTn0etB2emNk4J9EZg/yWKpsn9BWGRw==}
     engines: {node: '>=14.18.0', npm: '>=8.0.0'}
     hasBin: true
     optionalDependencies:
@@ -2429,8 +2429,8 @@ packages:
       atomic-sleep: 1.0.0
     dev: false
 
-  /sonic-boom@3.3.0:
-    resolution: {integrity: sha512-LYxp34KlZ1a2Jb8ZQgFCK3niIHzibdwtwNUWKg0qQRzsDoJ3Gfgkf8KdBTFU3SkejDEIlWwnSnpVdOZIhFMl/g==}
+  /sonic-boom@3.4.0:
+    resolution: {integrity: sha512-zSe9QQW30nPzjkSJ0glFQO5T9lHsk39tz+2bAAwCj8CNgEG8ItZiX7Wb2ZgA8I04dwRGCcf1m3ABJa8AYm12Fw==}
     dependencies:
       atomic-sleep: 1.0.0
     dev: false
@@ -2624,7 +2624,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      bundle-require: 4.0.1(esbuild@0.17.19)
+      bundle-require: 4.0.2(esbuild@0.17.19)
       cac: 6.7.14
       chokidar: 3.5.3
       debug: 4.3.4
@@ -2634,7 +2634,7 @@ packages:
       joycon: 3.1.1
       postcss-load-config: 3.1.4
       resolve-from: 5.0.0
-      rollup: 3.29.2
+      rollup: 3.29.4
       source-map: 0.8.0-beta.0
       sucrase: 3.34.0
       tree-kill: 1.2.2
