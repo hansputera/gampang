@@ -41,6 +41,7 @@
   "dependencies": {
     "@adiwajshing/baileys": "npm:@whiskeysockets/baileys@^6.5.0",
     "@adiwajshing/keyed-db": "^0.2.4",
+    "@sapphire/lexure": "^1.1.5",
     "long": "^5.2.3",
     "pino": "^8.15.1",
     "pino-pretty": "^9.4.1",

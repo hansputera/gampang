@@ -81,6 +81,17 @@ client.command(
 );
 
 client.command(
+  'test-edit',
+  async (ctx) => {
+    const m = await ctx.reply('Hello Woh!');
+    setTimeout(async () => await m.edit('Hello World!'), 1000);
+  },
+  {
+    aliases: ['testdit'],
+  },
+);
+
+client.command(
   'poll',
   async (ctx) => {
     await ctx.createPoll('Test', ['Apple', 'Orange']);

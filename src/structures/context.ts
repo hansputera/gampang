@@ -16,11 +16,20 @@ import { ButtonBuilder } from '../utils/builder';
 import { MessageCollector } from './collector';
 import { Document, Image, Sticker, Video } from './entities';
 import { GroupContext } from './group';
+import {
+  Lexer,
+  Parser,
+  ParserResult,
+  PrefixedStrategy,
+} from '@sapphire/lexure';
 
 /**
  * @class Context
  */
 export class Context {
+  public parser!: Parser;
+  public lexer!: Lexer;
+
   /**
    * @constructor
    * @param {Client} client Gampang Client
@@ -32,7 +41,6 @@ export class Context {
     private rawMessage: proto.IWebMessageInfo,
     groupSync: boolean | null = false,
   ) {
-    this.#reloadQuery();
     if (groupSync) this.syncGroup();
 
     if (rawMessage.message?.documentWithCaptionMessage?.message) {
@@ -42,6 +50,14 @@ export class Context {
         rawMessage.message.documentWithCaptionMessage.message.documentMessage,
       );
     }
+
+    this.parser = new Parser(new PrefixedStrategy(['--', '/'], ['=', ':']));
+    this.lexer = new Lexer({
+      quotes: [
+        ["'", "'"],
+        ['"', '"'],
+      ],
+    });
   }
 
   /**
@@ -138,9 +154,6 @@ export class Context {
     return responseButtons || undefined;
   }
 
-  public flags: string[] = [];
-  public args: string[] = [];
-
   /**
    * Get command details.
    * @return {Command}
@@ -197,47 +210,30 @@ export class Context {
     return true;
   }
 
-  /**
-   * Parse message to args and flags
-   *
-   * @return {{args: string[], flags: string[]}}
-   */
-  #reloadQuery(): { args: string[]; flags: string[] } {
-    this.args = [];
-    this.flags = [];
+  // /**
+  //  * Get the arguments of message (only available if it is a command)
+  //  *
+  //  * @param {boolean} withPrefix
+  //  * @return {string[]}
+  //  */
+  // public getArgs(withPrefix = false): string[] {
+  //   if (!this.isCommand()) return [];
+  //   let text = this.text;
+  //   const extendedMessage = this.raw.message?.extendedTextMessage;
 
-    for (const q of this.getArgs()) {
-      if (q.startsWith('--')) this.flags.push(q.slice(2).toLowerCase());
-      else this.args.push(q);
-    }
+  //   if (
+  //     extendedMessage &&
+  //     extendedMessage.contextInfo &&
+  //     extendedMessage.contextInfo.quotedMessage
+  //   ) {
+  //     text += ' ' + extendedMessage.contextInfo.quotedMessage.conversation;
+  //   }
 
-    return { args: this.args, flags: this.flags };
-  }
-
-  /**
-   * Get the arguments of message (only available if it is a command)
-   *
-   * @param {boolean} withPrefix
-   * @return {string[]}
-   */
-  public getArgs(withPrefix = false): string[] {
-    if (!this.isCommand()) return [];
-    let text = this.text;
-    const extendedMessage = this.raw.message?.extendedTextMessage;
-
-    if (
-      extendedMessage &&
-      extendedMessage.contextInfo &&
-      extendedMessage.contextInfo.quotedMessage
-    ) {
-      text += ' ' + extendedMessage.contextInfo.quotedMessage.conversation;
-    }
-
-    return text
-      .slice(this.getPrefix().length)
-      .split(/ +/g)
-      .slice(withPrefix ? 0 : 1);
-  }
+  //   return text
+  //     .slice(this.getPrefix().length)
+  //     .split(/ +/g)
+  //     .slice(withPrefix ? 0 : 1);
+  // }
 
   /**
    * Knows the message is command.
@@ -269,7 +265,17 @@ export class Context {
    * @return {string}
    */
   public getCommandName(): string {
-    return this.getArgs(true)[0];
+    if (!this.getPrefix().length) return '';
+    return this.#data.ordered.at(0)?.value.slice(this.getPrefix().length) ?? '';
+  }
+
+  /**
+   * Get option value
+   * @param {string} name Option name
+   * @return {string[]}
+   */
+  public getOption(name: string): string[] {
+    return this.#data.options.get(name) ?? [];
   }
 
   /**
@@ -664,6 +670,38 @@ export class Context {
   }
 
   /**
+   * [EXPERIMENTAL] Edit the message text
+   * @param {string} text Newer text
+   * @param {proto.IMessage?} options IMessage options
+   * @return {Promise<void>}
+   */
+  public async edit(text: string, options?: proto.IMessage): Promise<void> {
+    if (
+      this.authorNumber !==
+      this.client.raw?.user?.id?.replace(/:[0-9]+@.+/gi, '')
+    )
+      return;
+    await this.client.raw?.relayMessage(
+      this.raw.key.remoteJid as string,
+      {
+        editedMessage: {
+          message: {
+            protocolMessage: {
+              key: this.raw.key,
+              type: proto.Message.ProtocolMessage.Type.MESSAGE_EDIT,
+              editedMessage: {
+                conversation: text,
+                ...options,
+              },
+            },
+          },
+        },
+      },
+      {},
+    );
+  }
+
+  /**
    * Get collector instance.
    * @param {CollectorOptions} options - Message Collector options.
    * @return {MessageCollector}
@@ -677,6 +715,38 @@ export class Context {
    */
   get raw(): proto.IWebMessageInfo {
     return this.rawMessage;
+  }
+
+  /**
+   * Get lexure raw data
+   */
+  get #data(): ParserResult {
+    let text = this.text;
+    const extendedMessage = this.raw.message?.extendedTextMessage;
+
+    if (
+      extendedMessage &&
+      extendedMessage.contextInfo &&
+      extendedMessage.contextInfo.quotedMessage
+    ) {
+      text += ' ' + extendedMessage.contextInfo.quotedMessage.conversation;
+    }
+
+    return this.parser.run(this.lexer.run(text));
+  }
+
+  /**
+   * Command's arguments (e.g. "000789xxx")
+   */
+  get args(): string[] {
+    return this.#data.ordered.map((order) => order.value).slice(1);
+  }
+
+  /**
+   * Command's flags (e.g. --flag1, --flag2, /flag3)
+   */
+  get flags(): string[] {
+    return [...this.#data.flags];
   }
 }
 /**
