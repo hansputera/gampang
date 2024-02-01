@@ -681,11 +681,11 @@ export class Context {
       this.client.raw?.user?.id?.replace(/:[0-9]+@.+/gi, '')
     )
       return;
-      await this.sendRaw({
-        edit: this.raw,
-        text,
-        ...options,
-      });
+    await this.sendRaw({
+      edit: this.raw,
+      text,
+      ...options,
+    });
   }
 
   /**

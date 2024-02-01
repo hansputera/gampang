@@ -166,9 +166,16 @@ export class Client extends EventEmitter {
     this.logger.info('Launching Gampang Client');
     if (typeof options !== 'object')
       options = {
-        'logger': this.logger as unknown as Omit<UserFacingSocketConfig, 'auth'>['logger'],
+        'logger': this.logger as unknown as Omit<
+          UserFacingSocketConfig,
+          'auth'
+        >['logger'],
       };
-    else if (!options.logger) options.logger = this.logger as unknown as Omit<UserFacingSocketConfig, 'auth'>['logger'];
+    else if (!options.logger)
+      options.logger = this.logger as unknown as Omit<
+        UserFacingSocketConfig,
+        'auth'
+      >['logger'];
 
     if (!this.session.auth) {
       this.logger.debug('Refreshing authentiction state');
