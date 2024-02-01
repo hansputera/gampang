@@ -1,8 +1,6 @@
 import p from 'pino';
 
-export type PinoLogger = p.Logger<{
-  timestamp: () => string;
-}>;
+export type PinoLogger = p.Logger;
 
 /**
  * Create pino logger.

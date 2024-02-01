@@ -670,7 +670,7 @@ export class Context {
   }
 
   /**
-   * [EXPERIMENTAL] Edit the message text
+   * Edit the message text
    * @param {string} text Newer text
    * @param {proto.IMessage?} options IMessage options
    * @return {Promise<void>}
@@ -681,24 +681,11 @@ export class Context {
       this.client.raw?.user?.id?.replace(/:[0-9]+@.+/gi, '')
     )
       return;
-    await this.client.raw?.relayMessage(
-      this.raw.key.remoteJid as string,
-      {
-        editedMessage: {
-          message: {
-            protocolMessage: {
-              key: this.raw.key,
-              type: proto.Message.ProtocolMessage.Type.MESSAGE_EDIT,
-              editedMessage: {
-                conversation: text,
-                ...options,
-              },
-            },
-          },
-        },
-      },
-      {},
-    );
+      await this.sendRaw({
+        edit: this.raw,
+        text,
+        ...options,
+      });
   }
 
   /**

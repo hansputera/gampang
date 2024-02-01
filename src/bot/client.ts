@@ -14,7 +14,11 @@ import type {
 } from '../@typings';
 import { createLogger, PinoLogger } from '../logger';
 import { createWA } from './createWA';
-import { GroupContext, MessageCollector } from '../structures';
+import {
+  DataStoreKeyValMap,
+  GroupContext,
+  MessageCollector,
+} from '../structures';
 import { qrHandler, SessionManager } from '../utils';
 import { MiddlewareManager } from './middleware';
 
@@ -54,8 +58,7 @@ export class Client extends EventEmitter {
       };
 
     if (options.dataStore) this.dataStores = options.dataStore;
-    // TODO: change it.
-    else this.dataStores = new Map() as unknown as ClientOptions['dataStore'];
+    else this.dataStores = new DataStoreKeyValMap();
     this.logger = createLogger('Gampang', options.logger);
 
     if (!(session instanceof SessionManager))
@@ -163,9 +166,9 @@ export class Client extends EventEmitter {
     this.logger.info('Launching Gampang Client');
     if (typeof options !== 'object')
       options = {
-        'logger': this.logger,
+        'logger': this.logger as unknown as Omit<UserFacingSocketConfig, 'auth'>['logger'],
       };
-    else if (!options.logger) options.logger = this.logger;
+    else if (!options.logger) options.logger = this.logger as unknown as Omit<UserFacingSocketConfig, 'auth'>['logger'];
 
     if (!this.session.auth) {
       this.logger.debug('Refreshing authentiction state');

@@ -1,4 +1,7 @@
-import makeWASocket, { UserFacingSocketConfig } from '@adiwajshing/baileys';
+import makeWASocket, {
+  Browsers,
+  UserFacingSocketConfig,
+} from '@adiwajshing/baileys';
 import { RawClient } from '../@typings';
 import { SessionManager } from '../utils';
 
@@ -15,7 +18,7 @@ export const createWA = async (
   const bot = makeWASocket({
     ...config,
     'auth': session.auth,
-    'browser': ['Gampang', 'Chrome', '4.0.0'],
+    'browser': Browsers.windows('Chrome'), // safety issue
   });
 
   return bot;

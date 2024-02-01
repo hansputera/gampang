@@ -18,7 +18,7 @@ export interface ClientOptions {
   /**
    * Custom data store.
    */
-  dataStore?: IStore<string, unknown>;
+  dataStore?: IStore<string, string>;
   prefixes?: string[];
   owners?: string[];
   middlewares?: {

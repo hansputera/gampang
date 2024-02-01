@@ -14,7 +14,7 @@ import type {
 export class ButtonBuilder<T extends ButtonType> {
   protected buttons: Map<
     keyof UnionToIntersection<AnyRegularMessageContent>,
-    /** eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any
   > = new Map();
 
