@@ -18,14 +18,27 @@ const client = new Client(session, {
   },
   'prefixes': ['.'],
 });
+
 const commandLoader = new CommandLoader(
   client,
   path.resolve(__dirname, 'commands'),
 );
 void commandLoader.load();
 
+client.on('message', (ctx) => {
+  console.log(
+    ctx.text,
+    '::from::',
+    ctx.authorNumber,
+    '::on::',
+    ctx.getCurrentJid(),
+  );
+});
+
 client.on('ready', async () => {
   console.log(client.raw?.user, 'ready');
 });
 
-client.launch();
+client.launch({
+  defaultQueryTimeoutMs: undefined, // test purpose
+});

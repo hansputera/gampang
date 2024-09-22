@@ -163,6 +163,9 @@ export class Client extends EventEmitter {
       this.qrServer.close();
       this.qrServer = undefined;
     }
+    this.logger.info('Initializing Session State on SessionManager');
+    await this.session.init();
+
     this.logger.info('Launching Gampang Client');
     if (typeof options !== 'object')
       options = {
@@ -178,6 +181,7 @@ export class Client extends EventEmitter {
       >['logger'];
 
     if (!this.session.auth) {
+      // Make sure again the session state is available
       this.logger.debug('Refreshing authentiction state');
       await this.session.init();
     }
@@ -199,6 +203,11 @@ export class Client extends EventEmitter {
 
     if (!this.raw.user?.id)
       qrHandler(this, this.options?.qr as ClientOptions['qr']);
+
+    this.raw.ev.on('creds.update', async () => {
+      this.logger.info('Saving session');
+      await this.session.save();
+    });
 
     this.raw.ev.on('connection.update', async (conn) => {
       if (conn.connection === 'open' && this.raw && this.raw.user?.id) {
@@ -252,8 +261,6 @@ export class Client extends EventEmitter {
           }
         }
       }
-
-      await this.session.save();
     });
   }
 }

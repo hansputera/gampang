@@ -15,3 +15,8 @@ export interface Command {
   options?: CommandOptions;
   run(ctx: Context): Promise<void> | void;
 }
+
+export interface Cooldown {
+  wasWarned: boolean;
+  expiresAt: number;
+}

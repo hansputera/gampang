@@ -70,7 +70,7 @@ export class SessionManager {
           this.#auth = state.state;
         }
         state = await useMultiFileAuthState(this.path);
-        state.state = this.#auth;
+        state.state = this.auth;
         this.save = state.saveCreds;
 
         break;
@@ -147,7 +147,7 @@ export class SessionManager {
     if (!auth.creds || !auth.keys) return false;
     this.#auth = auth;
 
-    return !!this.#auth;
+    return !!this.auth;
   }
 
   /**

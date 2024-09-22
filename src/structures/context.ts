@@ -22,6 +22,7 @@ import {
   ParserResult,
   PrefixedStrategy,
 } from '@sapphire/lexure';
+import { AsyncQueue } from '@sapphire/async-queue';
 
 /**
  * @class Context
@@ -29,6 +30,7 @@ import {
 export class Context {
   public parser!: Parser;
   public lexer!: Lexer;
+  public queue = new AsyncQueue();
 
   /**
    * @constructor
@@ -407,15 +409,9 @@ export class Context {
    * @param {AnyMessageContent} options - Send message options
    */
   public async reply(text: string, options?: AnyMessageContent) {
-    return this.sendRaw(
-      {
-        text,
-        ...options,
-      },
-      {
-        quoted: this.raw,
-      },
-    );
+    return this.sendRaw(Object.assign({ text }, options ?? {}), {
+      quoted: this.raw,
+    });
   }
 
   /**
@@ -430,16 +426,18 @@ export class Context {
     options?: AnyMessageContent,
   ) {
     return this.sendRaw(
-      {
-        audio:
-          typeof audio === 'string'
-            ? {
-                url: audio,
-              }
-            : audio,
-        ptt: isVN,
-        ...options,
-      },
+      Object.assign(
+        {
+          audio:
+            typeof audio === 'string'
+              ? {
+                  url: audio,
+                }
+              : audio,
+          ptt: isVN,
+        },
+        options,
+      ),
       {
         quoted: this.raw,
       },
@@ -467,15 +465,17 @@ export class Context {
     }
 
     return this.sendRaw(
-      {
-        video:
-          typeof video === 'string'
-            ? {
-                url: video,
-              }
-            : video,
-        ...options,
-      },
+      Object.assign(
+        {
+          video:
+            typeof video === 'string'
+              ? {
+                  url: video,
+                }
+              : video,
+        },
+        options ?? {},
+      ),
       {
         quoted: this.raw,
       },
@@ -489,10 +489,14 @@ export class Context {
    * @param {AnyMessageContent} options - Send message options
    */
   public async send(text: string, options?: AnyMessageContent) {
-    return this.sendRaw({
-      text,
-      ...options,
-    });
+    return this.sendRaw(
+      Object.assign(
+        {
+          text,
+        },
+        options ?? {},
+      ),
+    );
   }
 
   /**
@@ -505,6 +509,8 @@ export class Context {
     raw: AnyMessageContent,
     miscOpt?: MiscMessageGenerationOptions,
   ): Promise<Context | undefined> {
+    await this.queue.wait();
+
     try {
       return new Context(
         this.client,
@@ -519,6 +525,8 @@ export class Context {
         `Couldn't send message because: ${(e as Error).message}`,
       );
       return undefined;
+    } finally {
+      this.queue.shift();
     }
   }
 
@@ -540,15 +548,17 @@ export class Context {
     }
 
     return this.sendRaw(
-      {
-        image:
-          typeof photo === 'string'
-            ? {
-                url: photo,
-              }
-            : photo,
-        ...options,
-      },
+      Object.assign(
+        {
+          image:
+            typeof photo === 'string'
+              ? {
+                  url: photo,
+                }
+              : photo,
+        },
+        options ?? {},
+      ),
       {
         quoted: this.raw,
       },
@@ -566,15 +576,17 @@ export class Context {
     options?: AnyMessageContent,
   ) {
     return this.sendRaw(
-      {
-        sticker:
-          typeof sticker === 'string'
-            ? {
-                url: sticker,
-              }
-            : sticker,
-        ...options,
-      },
+      Object.assign(
+        {
+          sticker:
+            typeof sticker === 'string'
+              ? {
+                  url: sticker,
+                }
+              : sticker,
+        },
+        options ?? {},
+      ),
       {
         quoted: this.raw,
       },
@@ -681,6 +693,7 @@ export class Context {
       this.client.raw?.user?.id?.replace(/:[0-9]+@.+/gi, '')
     )
       return;
+
     await this.sendRaw({
       edit: this.raw,
       text,

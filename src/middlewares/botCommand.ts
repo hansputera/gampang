@@ -18,6 +18,7 @@ export const botCommand: MiddlewareFunc = async (context: Context) => {
       return false;
     }
 
+    // Cooldown middleware
     let isCooldown: boolean | undefined = false;
 
     try {

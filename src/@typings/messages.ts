@@ -1,3 +1,7 @@
+import type {
+  AnyMessageContent,
+  MiscMessageGenerationOptions,
+} from '@adiwajshing/baileys';
 import { Context } from '../structures/context';
 
 export interface CollectorOptions {
@@ -52,4 +56,10 @@ export interface PollVoteEventData {
   sender?: string;
   payload: Uint8Array;
   payload_iv: Uint8Array;
+}
+
+export interface SendMessageList {
+  jid: string;
+  content: AnyMessageContent;
+  options?: MiscMessageGenerationOptions;
 }
