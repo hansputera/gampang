@@ -6,6 +6,8 @@ export * from './utils/commandLoader';
 export * from './utils/sessionManager';
 export * from './utils/builder';
 export * from './utils/sendMessages';
+export * from './utils/createClient';
+
 /**
  * See https://adiwajshing.github.io/Baileys/ for more information
  * @ignore
