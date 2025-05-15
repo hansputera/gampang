@@ -93,11 +93,12 @@ export abstract class BaseEntity {
    * @return {Promise<Buffer>}
    */
   public async retrieveFile(type: MediaType): Promise<Buffer> {
+    const keys = await getMediaKeys(this.key, type);
     let buff: Buffer = Buffer.alloc(0);
     return await new Promise((resolve, reject) => {
       downloadEncryptedContent(
         this.encryptedUrl,
-        getMediaKeys(this.key, type),
+        keys,
       ).then((stream) => {
         stream
           .on('data', async (data) => {
