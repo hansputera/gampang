@@ -9,11 +9,9 @@
     "**/*.json",
     "**/*.yml",
     "**/*.yaml",
-    "**/*.js",
+    "**/*.js"
   ],
-  "externalPattern": [
-    "**/node_modules/**"
-  ],
+  "externalPattern": ["**/node_modules/**"],
   "includeVersion": true,
   "pretty": true,
   "commentStyle": "all",
