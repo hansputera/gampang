@@ -1,6 +1,6 @@
 {
   "name": "gampang",
-  "version": "2.3.6",
+  "version": "2.3.7",
   "description": "\"Gampang\" is a whatsapp bot framework. Based on @adiwajshing/baileys",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -11,7 +11,7 @@
     "test": "npm run build && nodemon ./examples/normal.js",
     "clean": "rimraf dist",
     "prepare": "husky install",
-    "docs": "rimraf docs && typedoc --options typedoc.json"
+    "docs": "rimraf docs && typedoc"
   },
   "keywords": [
     "baileys",
@@ -34,12 +34,12 @@
     "rimraf": "^6.0.1",
     "sharp": "^0.33.5",
     "tsup": "^6.7.0",
-    "typedoc": "^0.23.28",
-    "typedoc-plugin-mdn-links": "^2.0.2",
-    "typescript": "4.8.4"
+    "typedoc": "^0.28.4",
+    "typedoc-plugin-mdn-links": "^5.0.2",
+    "typescript": "5.8.3"
   },
   "dependencies": {
-    "@adiwajshing/baileys": "npm:baileys",
+    "@adiwajshing/baileys": "npm:baileys@^6.7.17",
     "@adiwajshing/keyed-db": "^0.2.4",
     "@sapphire/async-queue": "^1.5.5",
     "@sapphire/lexure": "^1.1.10",
