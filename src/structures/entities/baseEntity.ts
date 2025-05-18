@@ -96,10 +96,7 @@ export abstract class BaseEntity {
     const keys = await getMediaKeys(this.key, type);
     let buff: Buffer = Buffer.alloc(0);
     return await new Promise((resolve, reject) => {
-      downloadEncryptedContent(
-        this.encryptedUrl,
-        keys,
-      ).then((stream) => {
+      downloadEncryptedContent(this.encryptedUrl, keys).then((stream) => {
         stream
           .on('data', async (data) => {
             buff = Buffer.concat([buff, data]);
